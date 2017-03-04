@@ -42,6 +42,8 @@ describe("GET /", function () {
     let response = await request(app)
       .get('/')
       .expect(500);
+
+    assert.strictEqual(response.body.statusCode, 500);
   });
 });
 
@@ -84,9 +86,11 @@ describe("GET /:id", function () {
   it("returns a 500 when the database fails", async function () {
     sandbox.stub(db, "getBird").withArgs("error-bird").throws(new Error("Bad bird"));
 
-    await request(app)
+    let response = await request(app)
       .get('/error-bird')
       .expect(500);
+
+    assert.strictEqual(response.body.statusCode, 500);
   });
 });
 
@@ -165,9 +169,11 @@ describe("DELETE /:id", function () {
   it("returns 404 if the bird does not exist", async function () {
     sandbox.stub(db, "deleteBird").withArgs("does-not-exist").returns(Promise.resolve(false));
 
-    await request(app)
+    let response = await request(app)
       .delete("/does-not-exist")
       .expect(404);
+
+    assert.strictEqual(response.body.statusCode, 404);
   });
 
   it("returns a 500 if the database throws an error", async function () {
