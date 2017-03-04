@@ -1,4 +1,7 @@
 const cluster = require('cluster');
+const logger = require('./logger');
+const server = require('./server');
+const port = 7080;
 
 if (cluster.isMaster) {
   var cpuCount = require('os').cpus().length;
@@ -7,15 +10,11 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 } else {
-  const server = require('./server');
-  const port = 7080;
   server.listen(port);
-  console.log(`Server listening on ${port}`);
+  logger.info(`Server listening on ${port}`);
 }
 
 cluster.on('exit', function (worker) {
-  // Replace the dead worker,
-  // we're not sentimental
-  console.log('Process %d died', worker.id);
+  logger.error('Process %d died', worker.id);
   cluster.fork();
 });

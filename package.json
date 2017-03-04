@@ -22,7 +22,8 @@
   "homepage": "https://github.com/birdrapp/ibis#readme",
   "dependencies": {
     "body-parser": "^1.17.0",
-    "express": "^4.15.0"
+    "express": "^4.15.0",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "mocha": "^3.2.0",
