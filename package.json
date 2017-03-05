@@ -6,7 +6,10 @@
   "scripts": {
     "test": "mocha --recursive",
     "start": "node index.js",
-    "create-db": "createdb ibis || true"
+    "create-db": "createdb ibis || true",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run",
+    "setup": "npm run create-db && npm run migrate && npm run seed"
   },
   "repository": {
     "type": "git",
