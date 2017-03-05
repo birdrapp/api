@@ -1,14 +1,13 @@
 language: node_js
-
 services:
-  - postgresql
-
+- postgresql
 node_js:
-  - "7.7.1"
-
+- 7.7.1
 before_script:
-  - psql -c 'create database ibis;' -U postgres
-  - npm run setup
-
+- psql -c 'create database ibis;' -U postgres
+- npm run setup
 install: npm install
 test: npm test
+notifications:
+  slack:
+    secure: 41Dg3uPQysNpC0o6vwSnCeaRn9bu2+B3X4yLKbdCu/jXcBUC0RXdlZ0q00l4Gn3HBp6ER4Rugue3Wye4jtxJFVor1OMOtXe9d5B9SNXDtCIo5u03ShM2EeMs8LGEOvWmBeIP8JACCkUWGuXnCueiN9941VuwYwPKqUiCEW1fbQvnTa0tg93Gv0yVb2v6rZnnvcebvy5r3T9vF0Q7s7Hf76vAdwh1X1+EB45PZrJV1A0h8Gnoiss9gxompabfe3zujCl1D59kn1IK/lCh6lFyCivJ5xO65vK1DEVj6vagxMuKUqJVjLNzmlQCqz/OZgwUUWvmtMiR+KTxymu0QsIkYF8XNohK9y+bNuWI6L86bBosixuehH1VDP4zbOD41JGKHKfnUXHv+fw16+YgdOoQhaRpAjH+XgPLRWyqgfVGN3BczLYVlvIEQkzO46QDhB7YoCcCiiHT5fhXHieIcwKk/WeQ36MDXeEvnf6F1zcwPhUbLIFQYbQt2XOMWB8Kt5S22sTeRx8lF+Kr3NyFsAXHD91wcBpV24i4LrKoEPtKTWhOWxRFWzWMaUFN3xV450k536PHUCMGW92RIfVxglJFQK96LTVUlG06ipljWrbUsbkTyDm1qJi718PqJRHPBOiJ9UUsibtB+zdzv+7z9ubk8kIFH/zrkqLKAlEJc9PGkwI=
