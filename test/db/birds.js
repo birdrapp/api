@@ -20,11 +20,11 @@ describe('birds', function () {
 
       assert.strictEqual(results.length, 3);
 
-      assert.deepEqual(robin, {
-        id: 'robin-robin',
-        commonName: 'Robin',
-        scientificName: 'Robin Robin'
-      });
+      assert.strictEqual(robin.id, 'robin-robin');
+      assert.strictEqual(robin.commonName, 'Robin');
+      assert.strictEqual(robin.scientificName, 'Robin Robin');
+      assert.notStrictEqual(robin.createdAt, undefined);
+      assert.notStrictEqual(robin.updatedAt, undefined);
     });
   });
 
@@ -32,11 +32,11 @@ describe('birds', function () {
     it("returns the bird with the given ID", async function () {
       const robin = await birds.find('robin-robin');
 
-      assert.deepEqual(robin, {
-        id: 'robin-robin',
-        commonName: 'Robin',
-        scientificName: 'Robin Robin'
-      });
+      assert.strictEqual(robin.id, 'robin-robin');
+      assert.strictEqual(robin.commonName, 'Robin');
+      assert.strictEqual(robin.scientificName, 'Robin Robin');
+      assert.notStrictEqual(robin.createdAt, undefined);
+      assert.notStrictEqual(robin.updatedAt, undefined);
     });
 
     it('returns undefined when the bird cannot be found', async function () {
@@ -78,11 +78,11 @@ describe('birds', function () {
 
       const bird = await birds.create(newBird);
 
-      assert.deepEqual(bird, {
-        commonName: 'New Bird',
-        scientificName: 'Newus Birdus',
-        id: 'newus-birdus'
-      });
+      assert.strictEqual(bird.id, 'newus-birdus');
+      assert.strictEqual(bird.commonName, 'New Bird');
+      assert.strictEqual(bird.scientificName, 'Newus Birdus');
+      assert.notStrictEqual(bird.createdAt, undefined);
+      assert.notStrictEqual(bird.updatedAt, undefined);
     });
 
     it('throws an error if an unexpected property is passed', async function () {
