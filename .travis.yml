@@ -8,7 +8,7 @@ node_js:
 
 before_script:
   - psql -c 'create database ibis;' -U postgres
-  - npm setup
+  - npm run setup
 
 
 install: npm install
