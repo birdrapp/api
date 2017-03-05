@@ -111,4 +111,18 @@ describe('birds', function () {
       }
     });
   });
+
+  describe('.delete', function () {
+    it('removes the bird from the database', async function () {
+      await birds.delete('robin-robin');
+      const results = await birds.all();
+
+      assert.strictEqual(results.length, 2);
+    });
+
+    it('returns 0 if the bird did not exist', async function () {
+      let result = await birds.delete('not-here');
+      assert.strictEqual(result, 0);
+    });
+  });
 });

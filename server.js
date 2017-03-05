@@ -76,7 +76,7 @@ app.delete("/:id", async function (req, res, next) {
     return next(ex);
   }
 
-  if (deleted === true) {
+  if (deleted === 1) {
     res.sendStatus(204);
   } else {
     next();

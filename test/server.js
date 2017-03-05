@@ -186,7 +186,7 @@ describe("DELETE /:id", function () {
   });
 
   it("returns a 200", async function () {
-    sandbox.stub(birds, "delete").withArgs('bird-id').returns(Promise.resolve(true));
+    sandbox.stub(birds, "delete").withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
       .delete('/bird-id')
@@ -194,7 +194,7 @@ describe("DELETE /:id", function () {
   });
 
   it("deletes the bird", async function () {
-    let stub = sandbox.stub(birds, "delete").withArgs("bird-id").returns(Promise.resolve(true));
+    let stub = sandbox.stub(birds, "delete").withArgs("bird-id").returns(Promise.resolve(1));
 
     await request(app)
       .delete("/bird-id")

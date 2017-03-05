@@ -34,5 +34,6 @@ module.exports.create = async function (bird) {
 }
 
 module.exports.delete = async function (id) {
-  throw new Error("Not yet supported");
+  const deleted = await Birds().del().where('id', id);
+  return deleted;
 }
