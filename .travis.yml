@@ -1,7 +1,15 @@
 language: node_js
 
+services:
+  - postgresql
+
 node_js:
   - "7.7.1"
+
+before_script:
+  - psql -c 'create database ibis;' -U postgres
+  - npm setup
+
 
 install: npm install
 test: npm test
