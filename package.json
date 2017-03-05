@@ -4,7 +4,7 @@
   "description": "Bird API",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --recursive",
     "start": "node index.js"
   },
   "repository": {
@@ -23,7 +23,12 @@
   "dependencies": {
     "body-parser": "^1.17.0",
     "boom": "^4.2.0",
+    "change-case": "^3.0.1",
     "express": "^4.15.0",
+    "joi": "^10.2.2",
+    "knex": "^0.12.7",
+    "lodash": "^4.17.4",
+    "pg": "^6.1.2",
     "winston": "^2.3.1"
   },
   "devDependencies": {

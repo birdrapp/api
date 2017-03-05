@@ -1,6 +1,6 @@
 const app = require('../server');
 const assert = require('assert');
-const db = require('../db');
+const birds = require('../db/birds');
 const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
@@ -11,7 +11,7 @@ describe("GET /", function () {
   });
 
   it("returns a 200", async function () {
-    sandbox.stub(db, 'listBirds').returns(Promise.resolve([]));
+    sandbox.stub(birds, 'all').returns(Promise.resolve([]));
 
     await request(app)
       .get('/')
@@ -19,7 +19,7 @@ describe("GET /", function () {
   });
 
   it("returns a list of birds", async function () {
-    const birds = [{
+    const results = [{
       id: 1,
       name: 'Robin'
     }, {
@@ -27,17 +27,17 @@ describe("GET /", function () {
       name: 'Crow'
     }];
 
-    sandbox.stub(db, 'listBirds').returns(Promise.resolve(birds));
+    sandbox.stub(birds, 'all').returns(Promise.resolve(results));
 
     let response = await request(app)
       .get('/')
       .expect(200);
 
-    assert.deepEqual(response.body.data, birds);
+    assert.deepEqual(response.body.data, results);
   });
 
   it("returns a 500 if the database fails", async function () {
-    sandbox.stub(db, 'listBirds').throws(new Error("Database failed"));
+    sandbox.stub(birds, 'all').throws(new Error("Database failed"));
 
     let response = await request(app)
       .get('/')
@@ -53,7 +53,7 @@ describe("GET /:id", function () {
   });
 
   it("returns a 200", async function () {
-    sandbox.stub(db, 'getBird').withArgs('legit-bird').returns(Promise.resolve({}));
+    sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve({}));
 
     await request(app)
       .get('/legit-bird')
@@ -66,7 +66,7 @@ describe("GET /:id", function () {
       name: 'Robin'
     };
 
-    sandbox.stub(db, 'getBird').withArgs('legit-bird').returns(Promise.resolve(bird));
+    sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
 
     let response = await request(app)
       .get('/legit-bird')
@@ -76,7 +76,7 @@ describe("GET /:id", function () {
   });
 
   it("returns a 404 for an unknown bird", async function () {
-    sandbox.stub(db, "getBird").withArgs("bird-that-doesnt-exist").returns(Promise.resolve());
+    sandbox.stub(birds, "find").withArgs("bird-that-doesnt-exist").returns(Promise.resolve());
 
     await request(app)
       .get('/bird-that-doesnt-exist')
@@ -84,7 +84,7 @@ describe("GET /:id", function () {
   });
 
   it("returns a 500 when the database fails", async function () {
-    sandbox.stub(db, "getBird").withArgs("error-bird").throws(new Error("Bad bird"));
+    sandbox.stub(birds, "find").withArgs("error-bird").throws(new Error("Bad bird"));
 
     let response = await request(app)
       .get('/error-bird')
@@ -95,51 +95,88 @@ describe("GET /:id", function () {
 });
 
 describe("POST /", function () {
+  let robin;
+
+  beforeEach(function () {
+    robin = {
+      commonName: 'Robin',
+      scientificName: 'Robin'
+    };
+  });
+
   afterEach(function () {
     sandbox.restore();
   });
 
-  it("returns a 201 for a new bird", async function () {
-    let bird = {
-      name: 'Robin'
-    };
-
-    sandbox.stub(db, 'createBird').withArgs(bird).returns(Promise.resolve(true));
-
+  it("saves the bird with a 201 response", async function () {
+    let stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
     await request(app)
       .post('/')
-      .send(bird)
-      .expect(201);
-  });
-
-  it("saves the bird", async function () {
-    let bird = {
-      name: 'Robin'
-    };
-
-    let stub = sandbox.stub(db, 'createBird').withArgs(bird).returns(Promise.resolve(true));
-    await request(app)
-      .post('/')
-      .send(bird)
+      .send(robin)
       .expect(201);
 
     assert.equal(stub.calledOnce, true);
   });
 
   it("returns the bird with an ID property", async function () {
-    let bird = {
-      name: 'Robin'
+    let expectedBird = {
+      commonName: 'Robin',
+      scientificName: 'Robin',
+      id: 'robin'
     };
-    let savedBird = bird;
-    savedBird.id = 'some id';
 
-    sandbox.stub(db, "createBird").withArgs(bird).returns(Promise.resolve(savedBird));
+    sandbox.stub(birds, "create").withArgs(robin).returns(Promise.resolve(expectedBird));
 
     let response = await request(app)
       .post('/')
-      .send(bird);
+      .send(robin)
+      .expect(201);
 
-    assert.deepEqual(savedBird, response.body.data);
+    assert.deepEqual(expectedBird, response.body.data);
+  });
+
+  it("returns a 400 if you send invalid parameters", async function () {
+    robin.invalid = 'Nope';
+
+    const stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
+
+    await request(app)
+      .post('/')
+      .send(robin)
+      .expect(400);
+
+    assert.equal(stub.notCalled, true);
+  });
+
+  it("returns a 400 when mandatory parameters are missing", async function () {
+    delete robin.commonName;
+
+    sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
+
+    await request(app)
+      .post('/')
+      .send(robin)
+      .expect(400);
+  });
+
+  it("returns a 400 if you send it invalid JSON", async function () {
+    const json = "{notJSON}";
+
+    sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
+
+    await request(app)
+      .post('/')
+      .send(json)
+      .expect(400);
+  });
+
+  it("returns a 500 if the database throws an error", async function () {
+    sandbox.stub(birds, "create").throws(new Error("Bad!"));
+
+    await request(app)
+      .post("/")
+      .send(robin)
+      .expect(500);
   });
 });
 
@@ -149,7 +186,7 @@ describe("DELETE /:id", function () {
   });
 
   it("returns a 200", async function () {
-    sandbox.stub(db, "deleteBird").withArgs('bird-id').returns(Promise.resolve(true));
+    sandbox.stub(birds, "delete").withArgs('bird-id').returns(Promise.resolve(true));
 
     await request(app)
       .delete('/bird-id')
@@ -157,7 +194,7 @@ describe("DELETE /:id", function () {
   });
 
   it("deletes the bird", async function () {
-    let stub = sandbox.stub(db, "deleteBird").withArgs("bird-id").returns(Promise.resolve(true));
+    let stub = sandbox.stub(birds, "delete").withArgs("bird-id").returns(Promise.resolve(true));
 
     await request(app)
       .delete("/bird-id")
@@ -167,7 +204,7 @@ describe("DELETE /:id", function () {
   });
 
   it("returns 404 if the bird does not exist", async function () {
-    sandbox.stub(db, "deleteBird").withArgs("does-not-exist").returns(Promise.resolve(false));
+    sandbox.stub(birds, "delete").withArgs("does-not-exist").returns(Promise.resolve(false));
 
     let response = await request(app)
       .delete("/does-not-exist")
@@ -177,7 +214,7 @@ describe("DELETE /:id", function () {
   });
 
   it("returns a 500 if the database throws an error", async function () {
-    sandbox.stub(db, "deleteBird").withArgs("broken-bird").throws(new Error("Boink!"));
+    sandbox.stub(birds, "delete").withArgs("broken-bird").throws(new Error("Boink!"));
 
     await request(app)
       .delete("/broken-bird")
