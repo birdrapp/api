@@ -72,7 +72,7 @@ describe("GET /:id", function () {
       .get('/legit-bird')
       .expect(200);
 
-    assert.deepEqual(response.body.data, bird);
+    assert.deepEqual(response.body, bird);
   });
 
   it("returns a 404 for an unknown bird", async function () {
@@ -132,7 +132,7 @@ describe("POST /", function () {
       .send(robin)
       .expect(201);
 
-    assert.deepEqual(expectedBird, response.body.data);
+    assert.deepEqual(expectedBird, response.body);
   });
 
   it("returns a 400 if you send invalid parameters", async function () {

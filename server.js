@@ -39,9 +39,7 @@ app.get('/:id', async function (req, res, next) {
   }
 
   if (bird !== undefined) {
-    return res.json({
-      data: bird
-    });
+    return res.json(bird);
   } else {
     next();
   }
@@ -62,9 +60,7 @@ app.post("/", async function (req, res, next) {
     return next(ex);
   }
 
-  res.status(201).json({
-    data: bird
-  });
+  res.status(201).json(bird);
 });
 
 app.delete("/:id", async function (req, res, next) {
