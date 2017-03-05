@@ -1,5 +1,3 @@
-process.env.NODE_ENV = 'test';
-
 const assert = require('assert');
 const knex = require('../../db/knex');
 const birds = require('../../db/birds');
