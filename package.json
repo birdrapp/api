@@ -9,7 +9,8 @@
     "create-db": "createdb ibis || true",
     "migrate": "knex migrate:latest",
     "seed": "knex seed:run",
-    "setup": "npm run create-db && npm run migrate && npm run seed"
+    "setup": "npm run create-db && npm run migrate && npm run seed",
+    "build": "docker build -f Dockerfile -t ibis:latest ."
   },
   "repository": {
     "type": "git",
