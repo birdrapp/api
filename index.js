@@ -1,7 +1,7 @@
 const cluster = require('cluster');
 const logger = require('./lib/logger');
 const server = require('./server');
-const port = 7080;
+const port = process.env.PORT || 8080;
 
 if (cluster.isMaster) {
   var cpuCount = require('os').cpus().length;
