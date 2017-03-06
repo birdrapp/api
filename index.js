@@ -1,5 +1,5 @@
 const cluster = require('cluster');
-const logger = require('./logger');
+const logger = require('./lib/logger');
 const server = require('./server');
 const port = 7080;
 

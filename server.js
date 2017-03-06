@@ -3,7 +3,7 @@ const birds = require("./db/birds");
 const express = require("express");
 const Joi = require('joi');
 const bodyParser = require('body-parser');
-const logger = require('./logger');
+const logger = require('./lib/logger');
 
 const app = express();
 
