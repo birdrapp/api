@@ -11,6 +11,10 @@ app.use(bodyParser.json());
 
 app.use('/v1/birds', birdsRoute);
 
+app.get('/.well-known/acme-challenge/iEho2yN6roLKhoroEspjGVYQ3juoAZ2eEuu1W_SNsgw', (req, res) => {
+  res.send('iEho2yN6roLKhoroEspjGVYQ3juoAZ2eEuu1W_SNsgw.uzYkmwKjSV0e7Hl4aK_jnCbvHAXDqKo3bObccSzGd9E');
+});
+
 // 404 handler
 app.use((req, res, next) => {
   const notFound = Boom.notFound();
