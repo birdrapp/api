@@ -100,7 +100,10 @@ describe('POST /birds', () => {
   beforeEach(() => {
     robin = {
       commonName: 'Robin',
-      scientificName: 'Robin'
+      scientificName: 'Robin',
+      familyName: 'Muscicapidae',
+      family: 'Old World flycatchers and chats',
+      order: 'Passeriformes'
     };
   });
 
@@ -118,21 +121,17 @@ describe('POST /birds', () => {
     assert.equal(stub.calledOnce, true);
   });
 
-  it('returns the bird with an ID property', async () => {
-    let expectedBird = {
-      commonName: 'Robin',
-      scientificName: 'Robin',
-      id: 'robin'
-    };
+  it('returns the newly created bird', async () => {
+    let expected = Object.assign({ id: 'robin-robin' }, robin);
 
-    sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(expectedBird));
+    sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(expected));
 
     let response = await request(app)
       .post('/v1/birds')
       .send(robin)
       .expect(201);
 
-    assert.deepEqual(expectedBird, response.body);
+    assert.strictEqual(response.body.id, 'robin-robin');
   });
 
   it('returns a 400 if you send invalid parameters', async () => {

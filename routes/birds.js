@@ -7,7 +7,11 @@ let router = new express.Router();
 
 const schema = Joi.object().keys({
   commonName: Joi.string().required().min(1).max(255),
-  scientificName: Joi.string().required().min(1).max(255)
+  scientificName: Joi.string().required().min(1).max(255),
+  familyName: Joi.string().required().min(1).max(255),
+  family: Joi.string().required().min(1).max(255),
+  order: Joi.string().required().min(1).max(255),
+  alternateNames: Joi.array().optional().items(Joi.string().min(1).max(255))
 });
 
 router.get('/', async (req, res, next) => {
