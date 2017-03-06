@@ -1,15 +1,11 @@
-sudo: required
 language: node_js
 services:
 - postgresql
-- docker
 node_js:
 - 7.7.1
 before_script:
 - psql -c 'create database ibis;' -U postgres
 - npm run setup
-before_install:
-- npm run build
 install: npm install
 test: npm test
 notifications:
