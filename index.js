@@ -4,7 +4,7 @@ const server = require('./server');
 const port = process.env.PORT || 8080;
 
 if (cluster.isMaster) {
-  var cpuCount = require('os').cpus().length;
+  const cpuCount = require('os').cpus().length;
 
   for (var i = 0; i < cpuCount; i += 1) {
     cluster.fork();

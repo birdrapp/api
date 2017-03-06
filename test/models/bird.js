@@ -29,7 +29,7 @@ describe('birds', function () {
   });
 
   describe('.find', function () {
-    it("returns the bird with the given ID", async function () {
+    it('returns the bird with the given ID', async function () {
       const robin = await birds.find('robin-robin');
 
       assert.strictEqual(robin.id, 'robin-robin');

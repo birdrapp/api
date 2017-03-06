@@ -1,4 +1,4 @@
-const birds = require("../models/bird");
+const birds = require('../models/bird');
 const Boom = require('boom');
 const express = require('express');
 const Joi = require('joi');
@@ -40,7 +40,7 @@ router.get('/:id', async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
+router.post('/', async function (req, res, next) {
   const result = Joi.validate(req.body, schema);
 
   if (result.error !== null) {
@@ -58,7 +58,7 @@ router.post("/", async function (req, res, next) {
   res.status(201).json(bird);
 });
 
-router.delete("/:id", async function (req, res, next) {
+router.delete('/:id', async function (req, res, next) {
   let deleted;
 
   try {

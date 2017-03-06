@@ -1,6 +1,6 @@
 const Boom = require('boom');
 const birdsRoute = require('./routes/birds');
-const express = require("express");
+const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./lib/logger');
 
@@ -16,7 +16,6 @@ app.use(function (req, res, next) {
   const notFound = Boom.notFound();
   res.status(notFound.output.statusCode).json(notFound.output.payload);
 });
-
 
 // 500 handler
 app.use(function (err, req, res, next) {
