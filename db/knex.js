@@ -1,3 +1,3 @@
 const config = require('config');
-
-module.exports = require('knex')(config.get('database'));
+const knex = require('knex')(config.get('database'));
+module.exports = knex;
