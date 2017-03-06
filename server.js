@@ -9,7 +9,7 @@ const app = express();
 // Allow POSTing of JSON data
 app.use(bodyParser.json());
 
-app.use('/birds', birdsRoute);
+app.use('/v1/birds', birdsRoute);
 
 // 404 handler
 app.use((req, res, next) => {
