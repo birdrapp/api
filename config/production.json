@@ -1,0 +1,12 @@
+{
+  "database": {
+    "client": "pg",
+    "connection": "DATABASE_URL",
+    "migrations": {
+      "directory": "db/migrations"
+    },
+    "seeds": {
+      "directory": "db/seeds"
+    }
+  }
+}

@@ -1,4 +1,3 @@
-var environment = process.env.NODE_ENV || 'development';
-var config = require('../knexfile.js')[environment];
+const config = require('config');
 
-module.exports = require('knex')(config);
+module.exports = require('knex')(config.get('database'));

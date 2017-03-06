@@ -1,0 +1,12 @@
+{
+  "database": {
+    "client": "pg",
+    "connection": "postgres://localhost/birdr",
+    "migrations": {
+      "directory": "db/migrations"
+    },
+    "seeds": {
+      "directory": "db/seeds"
+    }
+  }
+}
