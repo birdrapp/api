@@ -1,6 +1,6 @@
 const assert = require('assert');
 const knex = require('../../db/knex');
-const birds = require('../../db/birds');
+const birds = require('../../models/bird');
 
 describe('birds', function () {
   beforeEach(async function () {

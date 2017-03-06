@@ -21,6 +21,16 @@ module.exports = {
       directory: __dirname + '/db/seeds'
     }
   },
+  staging: {
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+    migrations: {
+      directory: __dirname + '/db/migrations'
+    },
+    seeds: {
+      directory: __dirname + '/db/seeds'
+    }
+  },
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL,
@@ -28,7 +38,7 @@ module.exports = {
       directory: __dirname + '/db/migrations'
     },
     seeds: {
-      directory: __dirname + '/db/seeds/production'
+      directory: __dirname + '/db/seeds'
     }
   }
 };

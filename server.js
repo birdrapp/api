@@ -1,89 +1,22 @@
 const Boom = require('boom');
-const birds = require("./db/birds");
+const birdsRoute = require('./routes/birds');
 const express = require("express");
-const Joi = require('joi');
 const bodyParser = require('body-parser');
 const logger = require('./lib/logger');
 
 const app = express();
 
-const schema = Joi.object().keys({
-  commonName: Joi.string().required().min(1).max(255),
-  scientificName: Joi.string().required().min(1).max(255)
-});
-
 // Allow POSTing of JSON data
 app.use(bodyParser.json());
 
-app.get('/', async function (req, res, next) {
-  let results;
-
-  try {
-    results = await birds.all();
-  } catch (ex) {
-    return next(ex);
-  }
-
-  res.json({
-    data: results
-  });
-});
-
-app.get('/:id', async function (req, res, next) {
-  let bird;
-
-  try {
-    bird = await birds.find(req.params.id);
-  } catch (ex) {
-    return next(ex);
-  }
-
-  if (bird !== undefined) {
-    return res.json(bird);
-  } else {
-    next();
-  }
-});
-
-app.post("/", async function (req, res, next) {
-  const result = Joi.validate(req.body, schema);
-
-  if (result.error !== null) {
-    return next(Boom.badRequest(result.message));
-  }
-
-  let bird;
-
-  try {
-    bird = await birds.create(req.body);
-  } catch (ex) {
-    return next(ex);
-  }
-
-  res.status(201).json(bird);
-});
-
-app.delete("/:id", async function (req, res, next) {
-  let deleted;
-
-  try {
-    deleted = await birds.delete(req.params.id);
-  } catch (ex) {
-    return next(ex);
-  }
-
-  if (deleted === 1) {
-    res.sendStatus(204);
-  } else {
-    next();
-  }
-});
+app.use('/birds', birdsRoute);
 
 // 404 handler
 app.use(function (req, res, next) {
   const notFound = Boom.notFound();
   res.status(notFound.output.statusCode).json(notFound.output.payload);
 });
+
 
 // 500 handler
 app.use(function (err, req, res, next) {

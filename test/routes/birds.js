@@ -1,11 +1,11 @@
-const app = require('../server');
+const app = require('../../server');
 const assert = require('assert');
-const birds = require('../db/birds');
+const birds = require('../../models/bird');
 const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
 
-describe("GET /", function () {
+describe("GET /birds", function () {
   afterEach(function () {
     sandbox.restore();
   });
@@ -14,7 +14,7 @@ describe("GET /", function () {
     sandbox.stub(birds, 'all').returns(Promise.resolve([]));
 
     await request(app)
-      .get('/')
+      .get('/birds')
       .expect(200)
   });
 
@@ -30,7 +30,7 @@ describe("GET /", function () {
     sandbox.stub(birds, 'all').returns(Promise.resolve(results));
 
     let response = await request(app)
-      .get('/')
+      .get('/birds')
       .expect(200);
 
     assert.deepEqual(response.body.data, results);
@@ -40,14 +40,14 @@ describe("GET /", function () {
     sandbox.stub(birds, 'all').throws(new Error("Database failed"));
 
     let response = await request(app)
-      .get('/')
+      .get('/birds')
       .expect(500);
 
     assert.strictEqual(response.body.statusCode, 500);
   });
 });
 
-describe("GET /:id", function () {
+describe("GET /birds/:id", function () {
   afterEach(function () {
     sandbox.restore();
   });
@@ -56,7 +56,7 @@ describe("GET /:id", function () {
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve({}));
 
     await request(app)
-      .get('/legit-bird')
+      .get('/birds/legit-bird')
       .expect(200);
   });
 
@@ -69,7 +69,7 @@ describe("GET /:id", function () {
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
 
     let response = await request(app)
-      .get('/legit-bird')
+      .get('/birds/legit-bird')
       .expect(200);
 
     assert.deepEqual(response.body, bird);
@@ -79,7 +79,7 @@ describe("GET /:id", function () {
     sandbox.stub(birds, "find").withArgs("bird-that-doesnt-exist").returns(Promise.resolve());
 
     await request(app)
-      .get('/bird-that-doesnt-exist')
+      .get('/birds/bird-that-doesnt-exist')
       .expect(404);
   });
 
@@ -87,14 +87,14 @@ describe("GET /:id", function () {
     sandbox.stub(birds, "find").withArgs("error-bird").throws(new Error("Bad bird"));
 
     let response = await request(app)
-      .get('/error-bird')
+      .get('/birds/error-bird')
       .expect(500);
 
     assert.strictEqual(response.body.statusCode, 500);
   });
 });
 
-describe("POST /", function () {
+describe("POST /birds", function () {
   let robin;
 
   beforeEach(function () {
@@ -111,7 +111,7 @@ describe("POST /", function () {
   it("saves the bird with a 201 response", async function () {
     let stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
     await request(app)
-      .post('/')
+      .post('/birds')
       .send(robin)
       .expect(201);
 
@@ -128,7 +128,7 @@ describe("POST /", function () {
     sandbox.stub(birds, "create").withArgs(robin).returns(Promise.resolve(expectedBird));
 
     let response = await request(app)
-      .post('/')
+      .post('/birds')
       .send(robin)
       .expect(201);
 
@@ -141,7 +141,7 @@ describe("POST /", function () {
     const stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/')
+      .post('/birds')
       .send(robin)
       .expect(400);
 
@@ -154,7 +154,7 @@ describe("POST /", function () {
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/')
+      .post('/birds')
       .send(robin)
       .expect(400);
   });
@@ -165,7 +165,7 @@ describe("POST /", function () {
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/')
+      .post('/birds')
       .send(json)
       .expect(400);
   });
@@ -174,13 +174,13 @@ describe("POST /", function () {
     sandbox.stub(birds, "create").throws(new Error("Bad!"));
 
     await request(app)
-      .post("/")
+      .post("/birds")
       .send(robin)
       .expect(500);
   });
 });
 
-describe("DELETE /:id", function () {
+describe("DELETE /birds/:id", function () {
   afterEach(function () {
     sandbox.restore();
   });
@@ -189,7 +189,7 @@ describe("DELETE /:id", function () {
     sandbox.stub(birds, "delete").withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
-      .delete('/bird-id')
+      .delete('/birds/bird-id')
       .expect(204);
   });
 
@@ -197,7 +197,7 @@ describe("DELETE /:id", function () {
     let stub = sandbox.stub(birds, "delete").withArgs("bird-id").returns(Promise.resolve(1));
 
     await request(app)
-      .delete("/bird-id")
+      .delete("/birds/bird-id")
       .expect(204);
 
     assert.equal(stub.calledOnce, true);
@@ -207,7 +207,7 @@ describe("DELETE /:id", function () {
     sandbox.stub(birds, "delete").withArgs("does-not-exist").returns(Promise.resolve(false));
 
     let response = await request(app)
-      .delete("/does-not-exist")
+      .delete("/birds/does-not-exist")
       .expect(404);
 
     assert.strictEqual(response.body.statusCode, 404);
@@ -217,7 +217,7 @@ describe("DELETE /:id", function () {
     sandbox.stub(birds, "delete").withArgs("broken-bird").throws(new Error("Boink!"));
 
     await request(app)
-      .delete("/broken-bird")
+      .delete("/birds/broken-bird")
       .expect(500);
   });
 });
