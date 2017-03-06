@@ -12,13 +12,13 @@ app.use(bodyParser.json());
 app.use('/birds', birdsRoute);
 
 // 404 handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   const notFound = Boom.notFound();
   res.status(notFound.output.statusCode).json(notFound.output.payload);
 });
 
 // 500 handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   if (err.isBoom) {
     logger.error(err.message);
     return res.status(err.output.statusCode).json(err.output.payload);

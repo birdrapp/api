@@ -14,7 +14,7 @@ if (cluster.isMaster) {
   logger.info(`Server listening on ${port}`);
 }
 
-cluster.on('exit', function (worker) {
+cluster.on('exit', (worker) => {
   logger.error('Process %d died', worker.id);
   cluster.fork();
 });

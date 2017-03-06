@@ -10,7 +10,7 @@ const schema = Joi.object().keys({
   scientificName: Joi.string().required().min(1).max(255)
 });
 
-router.get('/', async function (req, res, next) {
+router.get('/', async (req, res, next) => {
   let results;
 
   try {
@@ -24,7 +24,7 @@ router.get('/', async function (req, res, next) {
   });
 });
 
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', async (req, res, next) => {
   let bird;
 
   try {
@@ -40,12 +40,10 @@ router.get('/:id', async function (req, res, next) {
   }
 });
 
-router.post('/', async function (req, res, next) {
+router.post('/', async (req, res, next) => {
   const result = Joi.validate(req.body, schema);
 
-  if (result.error !== null) {
-    return next(Boom.badRequest(result.message));
-  }
+  if (result.error !== null) return next(Boom.badRequest(result.message));
 
   let bird;
 
@@ -58,7 +56,7 @@ router.post('/', async function (req, res, next) {
   res.status(201).json(bird);
 });
 
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', async (req, res, next) => {
   let deleted;
 
   try {

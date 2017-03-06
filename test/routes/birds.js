@@ -5,12 +5,12 @@ const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
 
-describe('GET /birds', function () {
-  afterEach(function () {
+describe('GET /birds', () => {
+  afterEach(() => {
     sandbox.restore();
   });
 
-  it('returns a 200', async function () {
+  it('returns a 200', async () => {
     sandbox.stub(birds, 'all').returns(Promise.resolve([]));
 
     await request(app)
@@ -18,7 +18,7 @@ describe('GET /birds', function () {
       .expect(200)
   });
 
-  it('returns a list of birds', async function () {
+  it('returns a list of birds', async () => {
     const results = [{
       id: 1,
       name: 'Robin'
@@ -36,7 +36,7 @@ describe('GET /birds', function () {
     assert.deepEqual(response.body.data, results);
   });
 
-  it('returns a 500 if the database fails', async function () {
+  it('returns a 500 if the database fails', async () => {
     sandbox.stub(birds, 'all').throws(new Error('Database failed'));
 
     let response = await request(app)
@@ -47,12 +47,12 @@ describe('GET /birds', function () {
   });
 });
 
-describe('GET /birds/:id', function () {
-  afterEach(function () {
+describe('GET /birds/:id', () => {
+  afterEach(() => {
     sandbox.restore();
   });
 
-  it('returns a 200', async function () {
+  it('returns a 200', async () => {
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve({}));
 
     await request(app)
@@ -60,7 +60,7 @@ describe('GET /birds/:id', function () {
       .expect(200);
   });
 
-  it('returns a bird object', async function () {
+  it('returns a bird object', async () => {
     let bird = {
       id: 'legit-bird',
       name: 'Robin'
@@ -75,7 +75,7 @@ describe('GET /birds/:id', function () {
     assert.deepEqual(response.body, bird);
   });
 
-  it('returns a 404 for an unknown bird', async function () {
+  it('returns a 404 for an unknown bird', async () => {
     sandbox.stub(birds, 'find').withArgs('bird-that-doesnt-exist').returns(Promise.resolve());
 
     await request(app)
@@ -83,7 +83,7 @@ describe('GET /birds/:id', function () {
       .expect(404);
   });
 
-  it('returns a 500 when the database fails', async function () {
+  it('returns a 500 when the database fails', async () => {
     sandbox.stub(birds, 'find').withArgs('error-bird').throws(new Error('Bad bird'));
 
     let response = await request(app)
@@ -94,21 +94,21 @@ describe('GET /birds/:id', function () {
   });
 });
 
-describe('POST /birds', function () {
+describe('POST /birds', () => {
   let robin;
 
-  beforeEach(function () {
+  beforeEach(() => {
     robin = {
       commonName: 'Robin',
       scientificName: 'Robin'
     };
   });
 
-  afterEach(function () {
+  afterEach(() => {
     sandbox.restore();
   });
 
-  it('saves the bird with a 201 response', async function () {
+  it('saves the bird with a 201 response', async () => {
     let stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
     await request(app)
       .post('/birds')
@@ -118,7 +118,7 @@ describe('POST /birds', function () {
     assert.equal(stub.calledOnce, true);
   });
 
-  it('returns the bird with an ID property', async function () {
+  it('returns the bird with an ID property', async () => {
     let expectedBird = {
       commonName: 'Robin',
       scientificName: 'Robin',
@@ -135,7 +135,7 @@ describe('POST /birds', function () {
     assert.deepEqual(expectedBird, response.body);
   });
 
-  it('returns a 400 if you send invalid parameters', async function () {
+  it('returns a 400 if you send invalid parameters', async () => {
     robin.invalid = 'Nope';
 
     const stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
@@ -148,7 +148,7 @@ describe('POST /birds', function () {
     assert.equal(stub.notCalled, true);
   });
 
-  it('returns a 400 when mandatory parameters are missing', async function () {
+  it('returns a 400 when mandatory parameters are missing', async () => {
     delete robin.commonName;
 
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
@@ -159,7 +159,7 @@ describe('POST /birds', function () {
       .expect(400);
   });
 
-  it('returns a 400 if you send it invalid JSON', async function () {
+  it('returns a 400 if you send it invalid JSON', async () => {
     const json = '{notJSON}';
 
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
@@ -170,7 +170,7 @@ describe('POST /birds', function () {
       .expect(400);
   });
 
-  it('returns a 500 if the database throws an error', async function () {
+  it('returns a 500 if the database throws an error', async () => {
     sandbox.stub(birds, 'create').throws(new Error('Bad!'));
 
     await request(app)
@@ -180,12 +180,12 @@ describe('POST /birds', function () {
   });
 });
 
-describe('DELETE /birds/:id', function () {
-  afterEach(function () {
+describe('DELETE /birds/:id', () => {
+  afterEach(() => {
     sandbox.restore();
   });
 
-  it('returns a 200', async function () {
+  it('returns a 200', async () => {
     sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
@@ -193,7 +193,7 @@ describe('DELETE /birds/:id', function () {
       .expect(204);
   });
 
-  it('deletes the bird', async function () {
+  it('deletes the bird', async () => {
     let stub = sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
@@ -203,7 +203,7 @@ describe('DELETE /birds/:id', function () {
     assert.equal(stub.calledOnce, true);
   });
 
-  it('returns 404 if the bird does not exist', async function () {
+  it('returns 404 if the bird does not exist', async () => {
     sandbox.stub(birds, 'delete').withArgs('does-not-exist').returns(Promise.resolve(false));
 
     let response = await request(app)
@@ -213,7 +213,7 @@ describe('DELETE /birds/:id', function () {
     assert.strictEqual(response.body.statusCode, 404);
   });
 
-  it('returns a 500 if the database throws an error', async function () {
+  it('returns a 500 if the database throws an error', async () => {
     sandbox.stub(birds, 'delete').withArgs('broken-bird').throws(new Error('Boink!'));
 
     await request(app)
