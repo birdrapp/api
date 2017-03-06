@@ -5,9 +5,9 @@ const knex = require('../db/knex.js');
 const Bird = () => knex('birds');
 const rowToBird = (row) => {
   let bird = _.mapKeys(row, (v, k) => changeCase.camel(k));
-  delete bird.familyId;
+  if (bird.alternateNames === null) bird.alternateNames = [];
   return bird;
-};
+}
 
 module.exports.all = async () => {
   return await Bird().select().map(rowToBird);

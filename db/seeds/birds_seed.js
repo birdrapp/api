@@ -13,7 +13,8 @@ exports.seed = async (knex,
         scientific_name: 'Robin Robin',
         family_name: 'Muscicapidae',
         family: 'Old World flycatchers and chats',
-        order: 'Passeriformes'
+        order: 'Passeriformes',
+        alternate_names: '{"European Robin"}'
       },
       {
         id: 'crow-crow',
@@ -21,7 +22,8 @@ exports.seed = async (knex,
         scientific_name: 'Crow Crow',
         family_name: 'Muscicapidae',
         family: 'Old World flycatchers and chats',
-        order: 'Passeriformes'
+        order: 'Passeriformes',
+        alternate_names: '{"European Robin"}'
       },
       {
         id: 'eagle-eagle',
