@@ -3,14 +3,22 @@ const changeCase = require('change-case');
 const knex = require('../db/knex.js');
 
 const Bird = () => knex('birds');
-const rowToBird = (row) => _.mapKeys(row, (v, k) => changeCase.camel(k));
+const rowToBird = (row) => {
+  let bird = _.mapKeys(row, (v, k) => changeCase.camel(k));
+  delete bird.familyId;
+  return bird;
+};
 
 module.exports.all = async () => {
   return await Bird().select().map(rowToBird);
 };
 
 module.exports.find = async (id) => {
-  const bird = await Bird().where('id', id).first();
+  const bird = await Bird()
+    .select('birds.*')
+    .where('id', id)
+    .first();
+
   if (bird !== undefined) return rowToBird(bird);
 };
 

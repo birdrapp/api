@@ -1,12 +1,36 @@
 
-exports.seed = async (knex, Promise) => {
+exports.seed = async (knex,
+  Promise) => {
   // Deletes ALL existing entries
-  await knex('birds').del()
 
-  // Inserts seed entries
-  return await knex('birds').insert([
-    { id: 'robin-robin', common_name: 'Robin', scientific_name: 'Robin Robin' },
-    { id: 'crow-crow', common_name: 'Crow', scientific_name: 'Crow Crow' },
-    { id: 'eagle-eagle', common_name: 'Eagle', scientific_name: 'Eagle Eagle' }
+
+  return Promise.all([
+    await knex('birds').del(),
+    await knex('birds').insert([
+      {
+        id: 'robin-robin',
+        common_name: 'Robin',
+        scientific_name: 'Robin Robin',
+        family_name: 'Muscicapidae',
+        family: 'Old World flycatchers and chats',
+        order: 'Passeriformes'
+      },
+      {
+        id: 'crow-crow',
+        common_name: 'Crow',
+        scientific_name: 'Crow Crow',
+        family_name: 'Muscicapidae',
+        family: 'Old World flycatchers and chats',
+        order: 'Passeriformes'
+      },
+      {
+        id: 'eagle-eagle',
+        common_name: 'Eagle',
+        scientific_name: 'Eagle Eagle',
+        family_name: 'Muscicapidae',
+        family: 'Old World flycatchers and chats',
+        order: 'Passeriformes'
+      }
+    ])
   ]);
 };

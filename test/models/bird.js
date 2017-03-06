@@ -35,6 +35,9 @@ describe('birds', () => {
       assert.strictEqual(robin.id, 'robin-robin');
       assert.strictEqual(robin.commonName, 'Robin');
       assert.strictEqual(robin.scientificName, 'Robin Robin');
+      assert.strictEqual(robin.familyName, 'Muscicapidae');
+      assert.strictEqual(robin.family, 'Old World flycatchers and chats');
+      assert.strictEqual(robin.order, 'Passeriformes');
       assert.notStrictEqual(robin.createdAt, undefined);
       assert.notStrictEqual(robin.updatedAt, undefined);
     });
@@ -46,40 +49,42 @@ describe('birds', () => {
   });
 
   describe('.create', () => {
-    it('saves the bird in the database', async () => {
-      const newBird = {
+    let validBird;
+    beforeEach(() => {
+      validBird = {
         commonName: 'New Bird',
-        scientificName: 'Newus Birdus'
+        scientificName: 'Newus Birdus',
+        familyName: 'Muscicapidae',
+        family: 'Old World flycatchers and chats',
+        order: 'Passeriformes'
       };
+    });
 
-      const confirmation = await birds.create(newBird);
+    it('saves the bird in the database', async () => {
+      const confirmation = await birds.create(validBird);
 
-      assert.strictEqual(newBird.commonName, confirmation.commonName);
-      assert.strictEqual(newBird.scientificName, confirmation.scientificName);
+      assert.strictEqual(validBird.commonName, confirmation.commonName);
+      assert.strictEqual(validBird.scientificName, confirmation.scientificName);
+      assert.strictEqual(validBird.familyName, confirmation.familyName);
+      assert.strictEqual(validBird.family, confirmation.family);
+      assert.strictEqual(validBird.order, confirmation.order);
     });
 
     it('uses a hyphenated version of the scientific name as an ID', async () => {
-      const newBird = {
-        commonName: 'New Bird',
-        scientificName: 'Newus Birdus'
-      };
-
-      const bird = await birds.create(newBird);
+      const bird = await birds.create(validBird);
 
       assert.strictEqual(bird.id, 'newus-birdus');
     });
 
     it('returns the newly created bird object', async () => {
-      const newBird = {
-        commonName: 'New Bird',
-        scientificName: 'Newus Birdus'
-      };
-
-      const bird = await birds.create(newBird);
+      const bird = await birds.create(validBird);
 
       assert.strictEqual(bird.id, 'newus-birdus');
       assert.strictEqual(bird.commonName, 'New Bird');
       assert.strictEqual(bird.scientificName, 'Newus Birdus');
+      assert.strictEqual(bird.familyName, 'Muscicapidae');
+      assert.strictEqual(bird.family, 'Old World flycatchers and chats');
+      assert.strictEqual(bird.order, 'Passeriformes');
       assert.notStrictEqual(bird.createdAt, undefined);
       assert.notStrictEqual(bird.updatedAt, undefined);
     });
@@ -88,7 +93,8 @@ describe('birds', () => {
       const invalidBird = {
         nope: 'Error',
         commonName: 'New Bird',
-        scientificName: 'Newus Birdus'
+        scientificName: 'Newus Birdus',
+        familyName: 'Muscicapidae'
       };
 
       try {
@@ -100,7 +106,8 @@ describe('birds', () => {
 
     it('throws an error if a mandatory property is missing', async () => {
       const invalidBird = {
-        scientificName: 'Newus Birdus'
+        scientificName: 'Newus Birdus',
+        familyName: 'Muscicapidae'
       };
 
       try {
