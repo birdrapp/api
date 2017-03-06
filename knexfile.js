@@ -3,7 +3,7 @@
 module.exports = {
   development: {
     client: 'pg',
-    connection: 'postgres://localhost/ibis',
+    connection: 'postgres://localhost/birdr',
     migrations: {
       directory: __dirname + '/db/migrations'
     },
@@ -13,7 +13,7 @@ module.exports = {
   },
   test: {
     client: 'pg',
-    connection: 'postgres://localhost/ibis',
+    connection: 'postgres://localhost/birdr',
     migrations: {
       directory: __dirname + '/db/migrations'
     },

@@ -1,5 +1,5 @@
 {
-  "name": "ibis",
+  "name": "birdr-api",
   "version": "1.0.0",
   "description": "Bird API",
   "main": "index.js",
@@ -9,14 +9,14 @@
   "scripts": {
     "test": "NODE_ENV=test mocha --recursive",
     "start": "node index.js",
-    "create-db": "createdb ibis || true",
+    "create-db": "createdb birdr || true",
     "migrate": "knex migrate:latest",
     "seed": "knex seed:run",
     "setup": "npm run create-db && npm run migrate && npm run seed"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/birdrapp/ibis.git"
+    "url": "git+https://github.com/birdrapp/api.git"
   },
   "keywords": [
     "birdr"
@@ -24,9 +24,9 @@
   "author": "Matthew Williams",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/birdrapp/ibis/issues"
+    "url": "https://github.com/birdrapp/api/issues"
   },
-  "homepage": "https://github.com/birdrapp/ibis#readme",
+  "homepage": "https://github.com/birdrapp/api#readme",
   "dependencies": {
     "body-parser": "^1.17.0",
     "boom": "^4.2.0",

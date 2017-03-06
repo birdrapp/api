@@ -4,7 +4,7 @@ services:
 node_js:
 - 7.7.1
 before_script:
-- psql -c 'create database ibis;' -U postgres
+- psql -c 'create database birdr;' -U postgres
 - npm run setup
 install: npm install
 test: npm test
