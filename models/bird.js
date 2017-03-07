@@ -5,7 +5,7 @@ const knex = require('../db/knex.js');
 const Bird = () => knex('birds');
 const rowToBird = (row) => {
   let bird = _.mapKeys(row, (v, k) => changeCase.camel(k));
-  if (bird.alternateNames === null) bird.alternateNames = [];
+  if (bird.alternativeNames === null) bird.alternativeNames = [];
   return bird;
 }
 

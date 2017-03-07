@@ -7,7 +7,7 @@ exports.up = async (knex, Promise) => {
     table.string('family_name').notNullable();
     table.string('family').notNullable();
     table.string('order').notNullable();
-    table.specificType('alternate_names', 'varchar(255)[]');
+    table.specificType('alternative_names', 'varchar(255)[]');
     table.timestamps(true, true);
   });
 };

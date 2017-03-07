@@ -9,7 +9,7 @@ const validateRobin = (robin) => {
   assert.strictEqual(robin.familyName, 'Muscicapidae');
   assert.strictEqual(robin.family, 'Old World flycatchers and chats');
   assert.strictEqual(robin.order, 'Passeriformes');
-  assert.deepEqual(robin.alternateNames, ['European Robin']);
+  assert.deepEqual(robin.alternativeNames, ['European Robin']);
   assert.notStrictEqual(robin.createdAt, undefined);
   assert.notStrictEqual(robin.updatedAt, undefined);
 };
@@ -46,7 +46,7 @@ describe('birds', () => {
     it('returns an empty array when the bird has no alternate names', async () => {
       const eagle = await birds.find('eagle-eagle');
 
-      assert.deepEqual(eagle.alternateNames, []);
+      assert.deepEqual(eagle.alternativeNames, []);
     });
 
     it('returns undefined when the bird cannot be found', async () => {
@@ -64,7 +64,7 @@ describe('birds', () => {
         familyName: 'Muscicapidae',
         family: 'Old World flycatchers and chats',
         order: 'Passeriformes',
-        alternateNames: ['One', 'Two', 'Three']
+        alternativeNames: ['One', 'Two', 'Three']
       };
     });
 
@@ -76,13 +76,13 @@ describe('birds', () => {
       assert.strictEqual(validBird.familyName, confirmation.familyName);
       assert.strictEqual(validBird.family, confirmation.family);
       assert.strictEqual(validBird.order, confirmation.order);
-      assert.deepEqual(validBird.alternateNames, confirmation.alternateNames);
+      assert.deepEqual(validBird.alternativeNames, confirmation.alternativeNames);
     });
 
     it('doesnt require alternate names', async () => {
-      delete validBird.alternateNames;
+      delete validBird.alternativeNames;
       const confirmation = await birds.create(validBird);
-      assert.deepEqual(confirmation.alternateNames, []);
+      assert.deepEqual(confirmation.alternativeNames, []);
     });
 
     it('uses a hyphenated version of the scientific name as an ID', async () => {
@@ -100,7 +100,7 @@ describe('birds', () => {
       assert.strictEqual(bird.familyName, 'Muscicapidae');
       assert.strictEqual(bird.family, 'Old World flycatchers and chats');
       assert.strictEqual(bird.order, 'Passeriformes');
-      assert.deepEqual(bird.alternateNames, ['One', 'Two', 'Three']);
+      assert.deepEqual(bird.alternativeNames, ['One', 'Two', 'Three']);
 
       assert.notStrictEqual(bird.createdAt, undefined);
       assert.notStrictEqual(bird.updatedAt, undefined);
