@@ -34,6 +34,33 @@ describe('birds', () => {
 
       validateRobin(robin);
     });
+
+    it('supports the perPage option', async () => {
+      const results = await birds.all({
+        perPage: 1
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, 'robin-robin');
+    });
+
+    it('supports a perPage of 0', async () => {
+      const results = await birds.all({
+        perPage: 0
+      });
+
+      assert.strictEqual(results.length, 0);
+    });
+
+    it('supports the page option', async () => {
+      const results = await birds.all({
+        perPage: 2,
+        page: 2
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, 'eagle-eagle');
+    });
   });
 
   describe('.count', () => {

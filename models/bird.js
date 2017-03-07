@@ -9,8 +9,18 @@ const rowToBird = (row) => {
   return bird;
 }
 
-module.exports.all = async () => {
-  return await Bird().select().map(rowToBird);
+module.exports.all = async (opts) => {
+  opts = opts || {};
+  const limit = opts.perPage;
+  const page = opts.page;
+
+  const offset = (page - 1) * limit;
+  const query = Bird().select();
+
+  if (limit !== undefined) query.limit(limit);
+  if (offset !== undefined) query.offset(offset);
+
+  return await query.map(rowToBird);
 };
 
 module.exports.count = async () => {
