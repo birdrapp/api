@@ -6,6 +6,18 @@ const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
 
+function createBirds(num) {
+  let birds = [];
+  for (var i = 1; i <= num; i++) {
+    birds.push({
+      id: i,
+      name: 'Robin ' + i
+    })
+  }
+
+  return birds;
+}
+
 describe('GET /v1/birds', () => {
   beforeEach(() => {
     sandbox.stub(birds, 'all').returns(Promise.resolve([]));
@@ -23,13 +35,7 @@ describe('GET /v1/birds', () => {
   });
 
   it('returns the birds from the database', async () => {
-    const results = [{
-      id: 1,
-      name: 'Robin'
-    }, {
-      id: 2,
-      name: 'Crow'
-    }];
+    const results = createBirds(2);
 
     birds.all.returns(Promise.resolve(results));
 
@@ -38,19 +44,13 @@ describe('GET /v1/birds', () => {
       .expect(200);
 
     assert.strictEqual(response.body.data[0].id, 1);
-    assert.strictEqual(response.body.data[0].name, 'Robin');
+    assert.strictEqual(response.body.data[0].name, 'Robin 1');
     assert.strictEqual(response.body.data[1].id, 2);
-    assert.strictEqual(response.body.data[1].name, 'Crow');
+    assert.strictEqual(response.body.data[1].name, 'Robin 2');
   });
 
   it('adds a link to each resource', async () => {
-    const results = [{
-      id: 'robin-robin',
-      name: 'Robin'
-    }, {
-      id: 'crow-crow',
-      name: 'Crow'
-    }];
+    const results = createBirds(2)
 
     birds.all.returns(Promise.resolve(results));
 
@@ -58,8 +58,8 @@ describe('GET /v1/birds', () => {
       .get('/v1/birds')
       .expect(200);
 
-    assert.equal(response.body.data[1].links.self, 'http://localhost:8080/v1/birds/crow-crow');
-    assert.equal(response.body.data[0].links.self, 'http://localhost:8080/v1/birds/robin-robin');
+    assert.equal(response.body.data[0].links.self, 'http://localhost:8080/v1/birds/1');
+    assert.equal(response.body.data[1].links.self, 'http://localhost:8080/v1/birds/2');
   });
 
   it('returns a 500 if the database fails', async () => {
@@ -159,6 +159,19 @@ describe('GET /v1/birds', () => {
       }));
       assert.strictEqual(response.body.page, 1);
       assert.strictEqual(response.body.perPage, 20);
+    });
+
+    it('returns the links for the next and previous pages', async () => {
+      const results = createBirds(3);
+      birds.all.returns(Promise.resolve(results));
+      birds.count.returns(Promise.resolve(9));
+
+      const response = await request(app)
+        .get('/v1/birds?page=2&perPage=1')
+        .expect(200);
+
+      assert.strictEqual(response.body.links.next, 'http://localhost:8080/v1/birds?page=3&perPage=1');
+      assert.strictEqual(response.body.links.previous, 'http://localhost:8080/v1/birds?page=1&perPage=1');
     });
   });
 });

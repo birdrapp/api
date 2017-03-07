@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "NODE_ENV=test mocha --recursive",
+    "autotest": "NODE_ENV=test mocha --recursive --watch",
     "start": "node index.js",
     "create-db": "createdb birdr || true",
     "migrate": "knex migrate:latest",

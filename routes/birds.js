@@ -1,5 +1,6 @@
 const birds = require('../models/bird');
 const href = require('../lib/href');
+const paginationLinks = require('../lib/pagination_links');
 const Boom = require('boom');
 const express = require('express');
 const Joi = require('joi');
@@ -54,6 +55,7 @@ router.get('/', async (req, res, next) => {
     page: page,
     perPage: perPage,
     total: results[1],
+    links: paginationLinks(req, results[1]),
     data: results[0].map(addLinks)
   });
 });
