@@ -5,7 +5,7 @@ const Joi = require('joi');
 
 let router = new express.Router();
 
-const schema = Joi.object().keys({
+const postSchema = Joi.object().keys({
   commonName: Joi.string().required().min(1).max(255),
   scientificName: Joi.string().required().min(1).max(255),
   familyName: Joi.string().required().min(1).max(255),
@@ -14,17 +14,39 @@ const schema = Joi.object().keys({
   alternativeNames: Joi.array().optional().items(Joi.string().min(1).max(255))
 });
 
+const listQuery = Joi.object().keys({
+  page: Joi.number().min(1).default(1),
+  perPage: Joi.number().min(0).default(20)
+})
+
 router.get('/', async (req, res, next) => {
+  const validate = Joi.validate(req.query, listQuery);
+
+  if (validate.error !== null) return next(Boom.badRequest(validate.message));
+  req.query = validate.value;
+
+  const perPage = req.query.perPage;
+  const page = req.query.page;
+
   let results;
 
   try {
-    results = await birds.all();
+    results = await Promise.all([
+      birds.all({
+        page: page,
+        perPage: perPage
+      }),
+      birds.count()
+    ]);
   } catch (ex) {
     return next(ex);
   }
 
   res.json({
-    data: results
+    page: page,
+    perPage: perPage,
+    total: results[1],
+    data: results[0]
   });
 });
 
@@ -45,7 +67,7 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/', async (req, res, next) => {
-  const result = Joi.validate(req.body, schema);
+  const result = Joi.validate(req.body, postSchema);
 
   if (result.error !== null) return next(Boom.badRequest(result.message));
 

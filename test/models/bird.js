@@ -36,6 +36,13 @@ describe('birds', () => {
     });
   });
 
+  describe('.count', () => {
+    it('returns the total count of birds in the database', async () => {
+      const result = await birds.count();
+      assert.strictEqual(result, 3);
+    });
+  });
+
   describe('.find', () => {
     it('returns the bird with the given ID', async () => {
       const robin = await birds.find('robin-robin');

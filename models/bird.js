@@ -13,6 +13,11 @@ module.exports.all = async () => {
   return await Bird().select().map(rowToBird);
 };
 
+module.exports.count = async () => {
+  const result = await Bird().count('id as count');
+  return parseInt(result[0].count);
+}
+
 module.exports.find = async (id) => {
   const bird = await Bird()
     .select('birds.*')
