@@ -1,6 +1,7 @@
 const app = require('../../server');
 const assert = require('assert');
 const birds = require('../../models/bird');
+const href = require('../../lib/href');
 const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
@@ -36,7 +37,29 @@ describe('GET /v1/birds', () => {
       .get('/v1/birds')
       .expect(200);
 
-    assert.deepEqual(response.body.data, results);
+    assert.strictEqual(response.body.data[0].id, 1);
+    assert.strictEqual(response.body.data[0].name, 'Robin');
+    assert.strictEqual(response.body.data[1].id, 2);
+    assert.strictEqual(response.body.data[1].name, 'Crow');
+  });
+
+  it('adds a link to each resource', async () => {
+    const results = [{
+      id: 'robin-robin',
+      name: 'Robin'
+    }, {
+      id: 'crow-crow',
+      name: 'Crow'
+    }];
+
+    birds.all.returns(Promise.resolve(results));
+
+    const response = await request(app)
+      .get('/v1/birds')
+      .expect(200);
+
+    assert.equal(response.body.data[1].links.self, 'http://localhost:8080/v1/birds/crow-crow');
+    assert.equal(response.body.data[0].links.self, 'http://localhost:8080/v1/birds/robin-robin');
   });
 
   it('returns a 500 if the database fails', async () => {

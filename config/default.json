@@ -8,5 +8,6 @@
     "seeds": {
       "directory": "db/seeds"
     }
-  }
+  },
+  "host": "http://localhost:8080"
 }

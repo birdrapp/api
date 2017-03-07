@@ -1,4 +1,5 @@
 const birds = require('../models/bird');
+const href = require('../lib/href');
 const Boom = require('boom');
 const express = require('express');
 const Joi = require('joi');
@@ -17,7 +18,14 @@ const postSchema = Joi.object().keys({
 const listQuery = Joi.object().keys({
   page: Joi.number().min(1).default(1),
   perPage: Joi.number().min(0).default(20)
-})
+});
+
+const addLinks = (bird) => {
+  bird.links = {
+    self: href(`/v1/birds/${bird.id}`)
+  }
+  return bird;
+}
 
 router.get('/', async (req, res, next) => {
   const validate = Joi.validate(req.query, listQuery);
@@ -46,7 +54,7 @@ router.get('/', async (req, res, next) => {
     page: page,
     perPage: perPage,
     total: results[1],
-    data: results[0]
+    data: results[0].map(addLinks)
   });
 });
 
