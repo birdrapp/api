@@ -23,7 +23,6 @@ app.use((err, req, res, next) => {
     logger.error(err.message);
     return res.status(err.output.statusCode).json(err.output.payload);
   }
-  let status = 500;
 
   if (err instanceof SyntaxError) {
     logger.warn(err.message);
