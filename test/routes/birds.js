@@ -173,6 +173,41 @@ describe('GET /v1/birds', () => {
       assert.strictEqual(response.body.links.previous, 'http://localhost:8080/v1/birds?page=1&perPage=1');
     });
   });
+
+  describe('search', () => {
+    it('supports search via the \'q\' parameter', async () => {
+      await request(app)
+        .get('/v1/birds?q=rob')
+        .expect(200);
+    });
+
+    it('passes the search term to the model', async () => {
+      await request(app)
+        .get('/v1/birds?q=rob')
+        .expect(200);
+
+      sinon.assert.calledWith(birds.all, sinon.match({
+        query: 'rob'
+      }));
+    });
+
+    it('returns the results provided by the model', async () => {
+      const results = [
+        { id: 'one' },
+        { id: 'two' }
+      ];
+
+      birds.all.withArgs(sinon.match({
+        query: 'rob'
+      })).returns(Promise.resolve(results));
+
+      const response = await request(app)
+        .get('/v1/birds?q=rob')
+        .expect(200);
+
+      assert.deepEqual(response.body.data, results);
+    });
+  });
 });
 
 describe('GET /v1/birds/:id', () => {

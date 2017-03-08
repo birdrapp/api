@@ -11,12 +11,15 @@ const rowToBird = (row) => {
 
 module.exports.all = async (opts) => {
   opts = opts || {};
+
   const limit = opts.perPage;
   const page = opts.page;
+  const q = opts.query;
 
   const offset = (page - 1) * limit;
   const query = Bird().select();
 
+  if (q !== undefined) query.where('common_name', 'ilike', `${q}%`);
   if (limit !== undefined) query.limit(limit);
   if (offset !== undefined) query.offset(offset);
 

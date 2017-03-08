@@ -61,6 +61,16 @@ describe('birds', () => {
       assert.strictEqual(results.length, 1);
       assert.equal(results[0].id, 'eagle-eagle');
     });
+
+    // TODO: find a better way of testing search queries
+    it('filters the results based on the query option', async () => {
+      const results = await birds.all({
+        query: 'rob'
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, 'robin-robin');
+    });
   });
 
   describe('.count', () => {
