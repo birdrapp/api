@@ -9,6 +9,13 @@ const app = express();
 // Allow POSTing of JSON data
 app.use(bodyParser.json());
 
+// Enable CORS requests
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 app.use('/v1/birds', birdsRoute);
 
 // 404 handler
