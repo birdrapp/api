@@ -1,7 +1,6 @@
 const app = require('../../server');
 const assert = require('assert');
 const birds = require('../../models/bird');
-const href = require('../../lib/href');
 const request = require('supertest');
 const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
