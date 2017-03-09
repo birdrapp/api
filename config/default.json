@@ -1,6 +1,7 @@
 {
   "database": {
     "client": "pg",
+    "debug": true,
     "connection": "postgres://localhost/birdr",
     "migrations": {
       "directory": "db/migrations"
