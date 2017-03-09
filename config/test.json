@@ -1,7 +1,7 @@
 {
   "database": {
     "client": "pg",
-    "connection": "postgres://localhost/birdr",
+    "connection": "postgres://localhost/birdr_test",
     "migrations": {
       "directory": "db/migrations"
     },
