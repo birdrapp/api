@@ -82,4 +82,20 @@ router.post('/', async (req, res, next) => {
   res.status(201).json(list);
 });
 
+router.delete('/:id', async (req, res, next) => {
+  let numDeleted;
+
+  try {
+    numDeleted = await birdList.delete(req.params.id);
+  } catch (ex) {
+    return next(ex);
+  }
+
+  if (numDeleted > 0) {
+    res.sendStatus(204);
+  } else {
+    next();
+  }
+});
+
 module.exports = router;

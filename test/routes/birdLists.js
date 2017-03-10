@@ -292,4 +292,42 @@ describe.only('Bird Lists', () => {
         .expect(500);
     });
   });
+
+  describe('DELETE /v1/bird-lists/:id', () => {
+    beforeEach(() => {
+      sandbox.stub(birdList, 'delete').returns(Promise.resolve(1));
+    });
+
+    it('returns a 204', async () => {
+      await request(app)
+        .delete('/v1/bird-lists/bou')
+        .expect(204);
+    });
+
+    it('deletes the bird list', async () => {
+      await request(app)
+        .delete('/v1/bird-lists/bou')
+        .expect(204);
+
+      sinon.assert.calledWith(birdList.delete, 'bou');
+    });
+
+    it('returns 404 if the bird list does not exist', async () => {
+      birdList.delete.withArgs('does-not-exist').returns(Promise.resolve(0));
+
+      let response = await request(app)
+        .delete('/v1/bird-lists/does-not-exist')
+        .expect(404);
+
+      assert.strictEqual(response.body.statusCode, 404);
+    });
+
+    it('returns a 500 if the database throws an error', async () => {
+      birdList.delete.withArgs('broken-list').throws(new Error('Boink!'));
+
+      await request(app)
+        .delete('/v1/bird-lists/broken-list')
+        .expect(500);
+    });
+  });
 });
