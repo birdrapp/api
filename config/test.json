@@ -7,6 +7,10 @@
     },
     "seeds": {
       "directory": "db/seeds"
-    }
+    },
+    "pool": {
+      "max": 2
+    },
+    "debug": false
   }
 }
