@@ -22,9 +22,15 @@ module.exports.all = async (opts = {}) => {
   return await query.map(rowToBirdList);
 };
 
+module.exports.birds = async () => new Error('Not yet implemented')
+
 module.exports.count = async () => {
   const result = await BirdList().count('id as count');
   return parseInt(result[0].count);
+}
+
+module.exports.countBirds = async () => {
+  new Error('Not yet implemented');
 }
 
 module.exports.find = async (id) => {

@@ -37,7 +37,8 @@ describe('paginationLinks', () => {
         page: 1,
         perPage: 10
       },
-      baseUrl: '/my/path'
+      baseUrl: '/my/path',
+      path: '/'
     }, 20);
 
     assert.strictEqual(result.next, 'http://localhost:8080/my/path?page=2&perPage=10');
@@ -49,10 +50,11 @@ describe('paginationLinks', () => {
         page: 2,
         perPage: 10
       },
-      baseUrl: '/my/path'
+      baseUrl: '/my/path',
+      path: '/nested/resource'
     }, 20);
 
-    assert.strictEqual(result.previous, 'http://localhost:8080/my/path?page=1&perPage=10');
+    assert.strictEqual(result.previous, 'http://localhost:8080/my/path/nested/resource?page=1&perPage=10');
   });
 
   it('leaves other query string parameters in tact', () => {
