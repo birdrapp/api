@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const sandbox = sinon.sandbox.create();
 
-describe.only('Bird Lists', () => {
+describe('Bird Lists', () => {
   afterEach(() => {
     sandbox.restore();
   });
