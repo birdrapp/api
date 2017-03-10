@@ -214,4 +214,82 @@ describe.only('Bird Lists', () => {
         .expect(404);
     });
   });
+
+  describe('POST /v1/bird-lists', () => {
+    let bou;
+
+    beforeEach(() => {
+      bou = {
+        name: 'The British List',
+        description: 'The British List is maintained by the BOU'
+      };
+
+      sandbox.stub(birdList, 'create').returns(Promise.resolve(bou));
+    });
+
+    it('saves the bird list with a 201 response', async () => {
+      await request(app)
+        .post('/v1/bird-lists')
+        .send(bou)
+        .expect(201);
+
+      sinon.assert.calledWith(birdList.create, sinon.match({
+        name: 'The British List',
+        description: 'The British List is maintained by the BOU'
+      }));
+    });
+
+    it('returns the newly created bird', async () => {
+      let expected = Object.assign({ id: 'bou' }, bou);
+
+      birdList.create.withArgs(bou).returns(Promise.resolve(expected));
+
+      let response = await request(app)
+        .post('/v1/bird-lists')
+        .send(bou)
+        .expect(201);
+
+      assert.strictEqual(response.body.id, 'bou');
+    });
+
+    it('returns a 400 if you send invalid parameters', async () => {
+      bou.invalid = 'Nope';
+
+      birdList.create.withArgs(bou).returns(Promise.resolve(true));
+
+      await request(app)
+        .post('/v1/bird-lists')
+        .send(bou)
+        .expect(400);
+
+      sinon.assert.notCalled(birdList.create);
+    });
+
+    it('returns a 400 when mandatory parameters are missing', async () => {
+      delete bou.name;
+
+      await request(app)
+        .post('/v1/bird-lists')
+        .send(bou)
+        .expect(400);
+    });
+
+    it('returns a 400 if you send it invalid JSON', async () => {
+      const json = '{notJSON}';
+
+      await request(app)
+        .post('/v1/bird-lists')
+        .send(json)
+        .expect(400);
+    });
+
+    it('returns a 500 if the database throws an error', async () => {
+      birdList.create.throws(new Error('Bad!'));
+
+      await request(app)
+        .post('/v1/bird-lists')
+        .send(bou)
+        .expect(500);
+    });
+  });
 });

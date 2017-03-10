@@ -19,6 +19,11 @@ const listQuery = Joi.object().keys({
   perPage: Joi.number().min(0).default(20)
 });
 
+const postSchema = Joi.object().keys({
+  name: Joi.string().required().min(1).max(255),
+  description: Joi.string().required()
+});
+
 router.get('/', async (req, res, next) => {
   const validate = Joi.validate(req.query, listQuery);
 
@@ -60,6 +65,21 @@ router.get('/:id', async (req, res, next) => {
   }
 
   res.json(list);
+});
+
+router.post('/', async (req, res, next) => {
+  const result = Joi.validate(req.body, postSchema);
+
+  if (result.error !== null) return next(Boom.badRequest(result.message));
+
+  let list;
+  try {
+    list = await birdList.create(req.body);
+  } catch (ex) {
+    return next(ex);
+  }
+
+  res.status(201).json(list);
 });
 
 module.exports = router;
