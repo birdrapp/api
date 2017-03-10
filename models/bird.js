@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const changeCase = require('change-case');
-const knex = require('../db/knex.js');
+const knex = require('../db/knex');
 
 const Bird = () => knex('birds');
 const rowToBird = (row) => {
