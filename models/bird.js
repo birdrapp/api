@@ -45,8 +45,6 @@ module.exports.create = async (bird) => {
     changeCase.snake(k)
   );
 
-  row.id = changeCase.paramCase(bird.scientificName);
-
   const ids = await Bird().insert(row, 'id');
   return await module.exports.find(ids[0]);
 }

@@ -1,13 +1,12 @@
 
 exports.up = async (knex, Promise) => {
   return await knex.schema.createTable('birds', (table) => {
-    table.string('id').primary();
+    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v1mc()'));
     table.string('common_name').notNullable();
     table.string('scientific_name').notNullable().unique();
     table.string('family_name').notNullable();
     table.string('family').notNullable();
     table.string('order').notNullable();
-    table.specificType('alternative_names', 'varchar(255)[]');
     table.timestamps(true, true);
   });
 };

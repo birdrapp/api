@@ -2,14 +2,18 @@ const assert = require('assert');
 const knex = require('../../db/knex');
 const birds = require('../../models/bird');
 
+const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
+
+const validId = '91b3f4c9-cff0-4147-a68a-65c4962208e0';
+const invalidId = '91b3f4c9-cff0-4147-a68a-65c4962208e1';
+
 const validateRobin = (robin) => {
-  assert.strictEqual(robin.id, 'robin-robin');
+  assert.strictEqual(robin.id, validId);
   assert.strictEqual(robin.commonName, 'Robin');
   assert.strictEqual(robin.scientificName, 'Robin Robin');
   assert.strictEqual(robin.familyName, 'Muscicapidae');
   assert.strictEqual(robin.family, 'Old World flycatchers and chats');
   assert.strictEqual(robin.order, 'Passeriformes');
-  assert.deepEqual(robin.alternativeNames, ['European Robin']);
   assert.notStrictEqual(robin.createdAt, undefined);
   assert.notStrictEqual(robin.updatedAt, undefined);
 };
@@ -41,7 +45,7 @@ describe('birds', () => {
       });
 
       assert.strictEqual(results.length, 1);
-      assert.equal(results[0].id, 'robin-robin');
+      assert.equal(results[0].id, validId);
     });
 
     it('supports a perPage of 0', async () => {
@@ -59,7 +63,7 @@ describe('birds', () => {
       });
 
       assert.strictEqual(results.length, 1);
-      assert.equal(results[0].id, 'eagle-eagle');
+      assert.equal(results[0].commonName, 'Eagle');
     });
 
     // TODO: find a better way of testing search queries
@@ -69,7 +73,7 @@ describe('birds', () => {
       });
 
       assert.strictEqual(results.length, 1);
-      assert.equal(results[0].id, 'robin-robin');
+      assert.equal(results[0].commonName, 'Robin');
     });
   });
 
@@ -82,19 +86,13 @@ describe('birds', () => {
 
   describe('.find', () => {
     it('returns the bird with the given ID', async () => {
-      const robin = await birds.find('robin-robin');
+      const robin = await birds.find(validId);
 
       validateRobin(robin);
     });
 
-    it('returns an empty array when the bird has no alternate names', async () => {
-      const eagle = await birds.find('eagle-eagle');
-
-      assert.deepEqual(eagle.alternativeNames, []);
-    });
-
     it('returns undefined when the bird cannot be found', async () => {
-      const nope = await birds.find('nope');
+      const nope = await birds.find(invalidId);
       assert.strictEqual(nope, undefined);
     });
   });
@@ -107,8 +105,7 @@ describe('birds', () => {
         scientificName: 'Newus Birdus',
         familyName: 'Muscicapidae',
         family: 'Old World flycatchers and chats',
-        order: 'Passeriformes',
-        alternativeNames: ['One', 'Two', 'Three']
+        order: 'Passeriformes'
       };
     });
 
@@ -123,28 +120,15 @@ describe('birds', () => {
       assert.deepEqual(validBird.alternativeNames, confirmation.alternativeNames);
     });
 
-    it('doesnt require alternate names', async () => {
-      delete validBird.alternativeNames;
-      const confirmation = await birds.create(validBird);
-      assert.deepEqual(confirmation.alternativeNames, []);
-    });
-
-    it('uses a hyphenated version of the scientific name as an ID', async () => {
-      const bird = await birds.create(validBird);
-
-      assert.deepEqual(bird.id, 'newus-birdus');
-    });
-
     it('returns the newly created bird object', async () => {
       const bird = await birds.create(validBird);
 
-      assert.strictEqual(bird.id, 'newus-birdus');
+      assert.ok(bird.id.match(UUID));
       assert.strictEqual(bird.commonName, 'New Bird');
       assert.strictEqual(bird.scientificName, 'Newus Birdus');
       assert.strictEqual(bird.familyName, 'Muscicapidae');
       assert.strictEqual(bird.family, 'Old World flycatchers and chats');
       assert.strictEqual(bird.order, 'Passeriformes');
-      assert.deepEqual(bird.alternativeNames, ['One', 'Two', 'Three']);
 
       assert.notStrictEqual(bird.createdAt, undefined);
       assert.notStrictEqual(bird.updatedAt, undefined);
@@ -181,14 +165,14 @@ describe('birds', () => {
 
   describe('.delete', () => {
     it('removes the bird from the database', async () => {
-      await birds.delete('robin-robin');
+      await birds.delete(validId);
       const results = await birds.all();
 
       assert.strictEqual(results.length, 2);
     });
 
     it('returns 0 if the bird did not exist', async () => {
-      let result = await birds.delete('not-here');
+      let result = await birds.delete(invalidId);
       assert.strictEqual(result, 0);
     });
   });
