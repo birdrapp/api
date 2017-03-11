@@ -11,6 +11,7 @@ exports.seed = async (knex, Promise) => {
       order: 'Passeriformes'
     },
     {
+      id: 'e67eb5d8-0695-11e7-9d5b-c70585d538fa',
       common_name: 'Crow',
       scientific_name: 'Crow Crow',
       family_name: 'Muscicapidae',
@@ -18,6 +19,7 @@ exports.seed = async (knex, Promise) => {
       order: 'Passeriformes'
     },
     {
+      id: 'ec56048e-0695-11e7-9d5b-9f01cdc37617',
       common_name: 'Eagle',
       scientific_name: 'Eagle Eagle',
       family_name: 'Muscicapidae',

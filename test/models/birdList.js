@@ -160,4 +160,73 @@ describe('BirdList', () => {
       assert.strictEqual(result, 0);
     });
   });
+
+  describe('.birds', () => {
+    it('returns the birds that are part of the list', async () => {
+      const results = await birdList.birds(validId);
+
+      assert.strictEqual(results.length, 2);
+
+      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
+      assert.strictEqual(results[1].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+    });
+
+    it('uses the local name of the bird', async () => {
+      const results = await birdList.birds(validId);
+
+      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
+      assert.strictEqual(results[0].commonName, 'British Robin');
+    });
+
+    it('uses the common name when no local name is provided', async () => {
+      const results = await birdList.birds(validId);
+
+      assert.strictEqual(results[1].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+      assert.strictEqual(results[1].commonName, 'Crow');
+    });
+
+    it('returns all the standard bird information', async () => {
+      const results = await birdList.birds(validId);
+
+      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
+      assert.strictEqual(results[0].commonName, 'British Robin');
+      assert.strictEqual(results[0].scientificName, 'Robin Robin');
+      assert.strictEqual(results[0].familyName, 'Muscicapidae');
+      assert.strictEqual(results[0].order, 'Passeriformes');
+      assert.strictEqual(results[0].family, 'Old World flycatchers and chats');
+    });
+
+    it('supports the perPage option', async () => {
+      const results = await birdList.birds(validId, {
+        perPage: 1
+      });
+
+      assert.strictEqual(results.length, 1);
+    });
+
+    it('supports a perPage of 0', async () => {
+      const results = await birdList.birds(validId, {
+        perPage: 0
+      });
+
+      assert.strictEqual(results.length, 0);
+    });
+
+    it('supports the page option', async () => {
+      const results = await birdList.birds(validId, {
+        perPage: 1,
+        page: 2
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+    });
+  });
+
+  describe('.countBirds', () => {
+    it('returns the total count of birds within a list', async () => {
+      const result = await birdList.countBirds(validId);
+      assert.strictEqual(result, 2);
+    });
+  });
 });

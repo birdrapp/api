@@ -9,9 +9,7 @@ const rowToBird = (row) => {
   return bird;
 }
 
-module.exports.all = async (opts) => {
-  opts = opts || {};
-
+module.exports.all = async (opts = {}) => {
   const limit = opts.perPage;
   const page = opts.page;
   const q = opts.query;
