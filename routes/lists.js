@@ -122,7 +122,7 @@ router.post('/:id/birds', async (req, res, next) => {
     return next(ex);
   }
 
-  res.sendStatus(201);
+  res.sendStatus(204);
 });
 
 router.post('/', async (req, res, next) => {

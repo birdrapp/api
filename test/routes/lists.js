@@ -403,7 +403,7 @@ describe('Bird Lists', () => {
       await request(app)
         .post('/lists/bou/birds')
         .send(robin)
-        .expect(201);
+        .expect(204);
 
       sinon.assert.calledWith(birdList.addBirdToList, 'bou', sinon.match({
         birdId: 'robin'
@@ -416,7 +416,7 @@ describe('Bird Lists', () => {
       await request(app)
         .post('/lists/bou/birds')
         .send(robin)
-        .expect(201);
+        .expect(204);
 
       sinon.assert.calledWith(birdList.addBirdToList, 'bou', sinon.match({
         birdId: 'robin',
