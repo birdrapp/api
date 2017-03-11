@@ -2,11 +2,10 @@ const _ = require('lodash');
 const changeCase = require('change-case')
 const knex = require('../db/knex');
 
-const BirdList = () => knex('lists');
-const BirdListBird = () => knex('list_birds');
-const Bird = () => knex('birds');
+const List = () => knex('lists');
+const ListBird = () => knex('list_birds');
 
-const rowToBirdList = (row) => {
+const rowToList = (row) => {
   if (row === undefined) return;
 
   return _.mapKeys(row, (v, k) => changeCase.camel(k));
@@ -16,19 +15,19 @@ module.exports.all = async (opts = {}) => {
   const limit = opts.perPage;
   const offset = (opts.page - 1) * limit;
 
-  const query = BirdList().select().orderBy('name');
+  const query = List().select().orderBy('name');
 
   if (limit !== undefined) query.limit(limit);
   if (offset !== undefined) query.offset(offset);
 
-  return await query.map(rowToBirdList);
+  return await query.map(rowToList);
 };
 
-module.exports.birds = async (birdListId, opts = {}) => {
+module.exports.birds = async (listId, opts = {}) => {
   const limit = opts.perPage;
   const offset = (opts.page - 1) * limit;
 
-  const query = BirdListBird()
+  const query = ListBird()
     .select([
       knex.raw('coalesce(list_birds.local_name, birds.common_name) as common_name'),
       'list_birds.created_at',
@@ -40,36 +39,44 @@ module.exports.birds = async (birdListId, opts = {}) => {
       'birds.id'
     ])
     .innerJoin('birds', 'birds.id', 'list_birds.bird_id')
-    .where('list_id', birdListId);
+    .where('list_id', listId);
 
   if (limit !== undefined) query.limit(limit);
   if (offset !== undefined) query.offset(offset);
 
-  return query.map(rowToBirdList);
+  return query.map(rowToList);
 }
 
 module.exports.count = async () => {
-  const result = await BirdList().count('id as count');
+  const result = await List().count('id as count');
   return parseInt(result[0].count);
 }
 
 module.exports.countBirds = async (id) => {
-  const result = await BirdListBird().where('list_id', id).count('bird_id');
+  const result = await ListBird().where('list_id', id).count('bird_id');
   return parseInt(result[0].count);
 }
 
 module.exports.find = async (id) => {
-  return rowToBirdList(await BirdList()
+  return rowToList(await List()
     .select()
     .where('id', id)
     .first());
 }
 
 module.exports.create = async (list) => {
-  const ids = await BirdList().insert(list, 'id');
+  const ids = await List().insert(list, 'id');
   return await module.exports.find(ids[0]);
 }
 
 module.exports.delete = async (id) => {
-  return await BirdList().del().where('id', id);
+  return await List().del().where('id', id);
+}
+
+module.exports.addBirdToList = async (listId, opts = {}) => {
+  await ListBird().insert({
+    bird_id: opts.birdId,
+    list_id: listId,
+    local_name: opts.localName
+  }, ['bird_id', 'list_id']);
 }

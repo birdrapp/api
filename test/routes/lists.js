@@ -389,6 +389,78 @@ describe('Bird Lists', () => {
     });
   });
 
+  describe('POST /lists/:id/birds', () => {
+    let robin;
+
+    beforeEach(() => {
+      sandbox.stub(birdList, 'addBirdToList').returns(Promise.resolve(true));
+      robin = {
+        birdId: 'robin'
+      };
+    });
+
+    it('adds a bird to the list', async () => {
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(201);
+
+      sinon.assert.calledWith(birdList.addBirdToList, 'bou', sinon.match({
+        birdId: 'robin'
+      }));
+    });
+
+    it('can accept a local name for the bird', async () => {
+      robin.localName = 'British Robin';
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(201);
+
+      sinon.assert.calledWith(birdList.addBirdToList, 'bou', sinon.match({
+        birdId: 'robin',
+        localName: 'British Robin'
+      }));
+    });
+
+    it('returns a 400 if you send invalid parameters', async () => {
+      robin.invalid = 'ibl';
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(400);
+
+      sinon.assert.notCalled(birdList.addBirdToList);
+    });
+
+    it('returns a 400 when mandatory parameters are missing', async () => {
+      delete robin.birdId;
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(400);
+    });
+
+    it('returns a 400 if you send it invalid JSON', async () => {
+      await request(app)
+        .post('/lists/bou/birds')
+        .send('{notJSON}')
+        .expect(400);
+    });
+
+    it('returns a 500 if the database throws an error', async () => {
+      birdList.addBirdToList.throws(new Error('Bad!'));
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(500);
+    });
+  });
+
   describe('POST /lists', () => {
     let bou;
 

@@ -6,6 +6,7 @@ const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
 const validId = '91b3f4c9-cff0-4147-a68a-65c4962208e0';
 const invalidId = '91b3f4c9-cff0-4147-a68a-65c4962208e1';
+const newId = 'ec56048e-0695-11e7-9d5b-9f01cdc37617';
 
 describe('BirdList', () => {
   beforeEach(async () => {
@@ -227,6 +228,39 @@ describe('BirdList', () => {
     it('returns the total count of birds within a list', async () => {
       const result = await birdList.countBirds(validId);
       assert.strictEqual(result, 2);
+    });
+  });
+
+  describe('.addBirdToList', () => {
+    it('adds a record to the list_birds table', async () => {
+      const original = await birdList.countBirds(validId);
+      await birdList.addBirdToList(validId, {
+        birdId: newId
+      });
+      const changed = await birdList.countBirds(validId);
+
+      assert.strictEqual(changed, original + 1);
+    });
+
+    it('allows a local name', async () => {
+      await birdList.addBirdToList(validId, {
+        birdId: newId,
+        localName: 'Rare Robin'
+      });
+      const results = await birdList.birds(validId);
+      assert.strictEqual(results[2].commonName, 'Rare Robin');
+    });
+
+    it('returns an error when trying to add a bird that already exists within the list', async () => {
+      const invalidAddition = {
+        birdId: validId
+      };
+
+      try {
+        await birdList.addBirdToList(validId, invalidAddition);
+      } catch (ex) {
+        assert.notEqual(ex, undefined);
+      }
     });
   });
 });

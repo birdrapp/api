@@ -29,6 +29,11 @@ const postSchema = Joi.object().keys({
   description: Joi.string().required()
 });
 
+const addBirdSchema = Joi.object().keys({
+  birdId: Joi.string().required(),
+  localName: Joi.string()
+});
+
 router.get('/', async (req, res, next) => {
   const validate = Joi.validate(req.query, listQuery);
 
@@ -104,6 +109,20 @@ router.get('/:id/birds', async (req, res, next) => {
     links: paginationLinks(req, results[2]),
     data: results[0].map(linker('bird'))
   });
+});
+
+router.post('/:id/birds', async (req, res, next) => {
+  const result = Joi.validate(req.body, addBirdSchema);
+
+  if (result.error !== null) return next(Boom.badRequest(result.message));
+
+  try {
+    await birdList.addBirdToList(req.params.id, req.body);
+  } catch (ex) {
+    return next(ex);
+  }
+
+  res.sendStatus(201);
 });
 
 router.post('/', async (req, res, next) => {
