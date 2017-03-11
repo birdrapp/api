@@ -24,7 +24,7 @@ const listQuery = Joi.object().keys({
 
 const addLinks = (bird) => {
   bird.links = {
-    self: href(`/v1/birds/${bird.id}`)
+    self: href(`/birds/${bird.id}`)
   }
   return bird;
 }

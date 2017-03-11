@@ -17,7 +17,7 @@ function createBirds(num) {
   return birds;
 }
 
-describe('GET /v1/birds', () => {
+describe('GET /birds', () => {
   beforeEach(() => {
     sandbox.stub(birds, 'all').returns(Promise.resolve([]));
     sandbox.stub(birds, 'count').returns(Promise.resolve(0));
@@ -29,7 +29,7 @@ describe('GET /v1/birds', () => {
 
   it('returns a 200', async () => {
     await request(app)
-      .get('/v1/birds')
+      .get('/birds')
       .expect(200)
   });
 
@@ -39,7 +39,7 @@ describe('GET /v1/birds', () => {
     birds.all.returns(Promise.resolve(results));
 
     const response = await request(app)
-      .get('/v1/birds')
+      .get('/birds')
       .expect(200);
 
     assert.strictEqual(response.body.data[0].id, 1);
@@ -54,18 +54,18 @@ describe('GET /v1/birds', () => {
     birds.all.returns(Promise.resolve(results));
 
     const response = await request(app)
-      .get('/v1/birds')
+      .get('/birds')
       .expect(200);
 
-    assert.equal(response.body.data[0].links.self, 'http://localhost:8080/v1/birds/1');
-    assert.equal(response.body.data[1].links.self, 'http://localhost:8080/v1/birds/2');
+    assert.equal(response.body.data[0].links.self, 'http://localhost:8080/birds/1');
+    assert.equal(response.body.data[1].links.self, 'http://localhost:8080/birds/2');
   });
 
   it('returns a 500 if the database fails', async () => {
     birds.all.throws(new Error('Database failed'));
 
     const response = await request(app)
-      .get('/v1/birds')
+      .get('/birds')
       .expect(500);
 
     assert.strictEqual(response.body.statusCode, 500);
@@ -74,7 +74,7 @@ describe('GET /v1/birds', () => {
   describe('pagination', () => {
     it('returns the per page in the response', async () => {
       const response = await request(app)
-        .get('/v1/birds?perPage=4')
+        .get('/birds?perPage=4')
         .expect(200);
 
       assert.strictEqual(response.body.perPage, 4);
@@ -82,7 +82,7 @@ describe('GET /v1/birds', () => {
 
     it('returns the page in the response', async () => {
       const response = await request(app)
-        .get('/v1/birds?page=2')
+        .get('/birds?page=2')
         .expect(200);
 
       assert.strictEqual(response.body.page, 2);
@@ -92,7 +92,7 @@ describe('GET /v1/birds', () => {
       birds.count.returns(Promise.resolve(10000));
 
       const response = await request(app)
-        .get('/v1/birds')
+        .get('/birds')
         .expect(200);
 
       assert.strictEqual(response.body.total, 10000);
@@ -101,12 +101,12 @@ describe('GET /v1/birds', () => {
     it('returns a 500 if the total count fails', async () => {
       birds.count.throws(new Error('Whoops'));
 
-      await request(app).get('/v1/birds').expect(500);
+      await request(app).get('/birds').expect(500);
     });
 
     it('sends the pagination parameters to the database', async () => {
       await request(app)
-        .get('/v1/birds?page=3&perPage=17')
+        .get('/birds?page=3&perPage=17')
         .expect(200);
 
       sinon.assert.calledWith(birds.all, sinon.match({
@@ -116,20 +116,20 @@ describe('GET /v1/birds', () => {
     });
 
     it('returns an error when the page parameter is invalid', async () => {
-      await request(app).get('/v1/birds?page=ibl').expect(400);
+      await request(app).get('/birds?page=ibl').expect(400);
     });
 
     it('returns an error when page <= 0', async () => {
-      await request(app).get('/v1/birds?page=-1').expect(400);
-      await request(app).get('/v1/birds?page=0').expect(400);
+      await request(app).get('/birds?page=-1').expect(400);
+      await request(app).get('/birds?page=0').expect(400);
     });
 
     it('returns an error when the perPage parameter is invalid', async () => {
-      await request(app).get('/v1/birds?perPage=ibl').expect(400);
+      await request(app).get('/birds?perPage=ibl').expect(400);
     });
 
     it('returns an error when perPage < 0', async () => {
-      await request(app).get('/v1/birds?perPage=-1').expect(400);
+      await request(app).get('/birds?perPage=-1').expect(400);
     });
 
     it('returns an empty result set when perPage is 0', async () => {
@@ -140,7 +140,7 @@ describe('GET /v1/birds', () => {
       birds.count.returns(Promise.resolve(800));
 
       const response = await request(app)
-        .get('/v1/birds?perPage=0')
+        .get('/birds?perPage=0')
         .expect(200);
 
       assert.strictEqual(response.body.total, 800);
@@ -149,7 +149,7 @@ describe('GET /v1/birds', () => {
 
     it('defaults to page 1 and perPage 20', async () => {
       const response = await request(app)
-        .get('/v1/birds')
+        .get('/birds')
         .expect(200);
 
       sinon.assert.calledWith(birds.all, sinon.match({
@@ -166,24 +166,24 @@ describe('GET /v1/birds', () => {
       birds.count.returns(Promise.resolve(9));
 
       const response = await request(app)
-        .get('/v1/birds?page=2&perPage=1')
+        .get('/birds?page=2&perPage=1')
         .expect(200);
 
-      assert.strictEqual(response.body.links.next, 'http://localhost:8080/v1/birds?page=3&perPage=1');
-      assert.strictEqual(response.body.links.previous, 'http://localhost:8080/v1/birds?page=1&perPage=1');
+      assert.strictEqual(response.body.links.next, 'http://localhost:8080/birds?page=3&perPage=1');
+      assert.strictEqual(response.body.links.previous, 'http://localhost:8080/birds?page=1&perPage=1');
     });
   });
 
   describe('search', () => {
     it('supports search via the \'q\' parameter', async () => {
       await request(app)
-        .get('/v1/birds?q=rob')
+        .get('/birds?q=rob')
         .expect(200);
     });
 
     it('passes the search term to the model', async () => {
       await request(app)
-        .get('/v1/birds?q=rob')
+        .get('/birds?q=rob')
         .expect(200);
 
       sinon.assert.calledWith(birds.all, sinon.match({
@@ -202,7 +202,7 @@ describe('GET /v1/birds', () => {
       })).returns(Promise.resolve(results));
 
       const response = await request(app)
-        .get('/v1/birds?q=rob')
+        .get('/birds?q=rob')
         .expect(200);
 
       assert.deepEqual(response.body.data, results);
@@ -210,7 +210,7 @@ describe('GET /v1/birds', () => {
   });
 });
 
-describe('GET /v1/birds/:id', () => {
+describe('GET /birds/:id', () => {
   afterEach(() => {
     sandbox.restore();
   });
@@ -219,7 +219,7 @@ describe('GET /v1/birds/:id', () => {
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve({}));
 
     await request(app)
-      .get('/v1/birds/legit-bird')
+      .get('/birds/legit-bird')
       .expect(200);
   });
 
@@ -232,7 +232,7 @@ describe('GET /v1/birds/:id', () => {
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
 
     let response = await request(app)
-      .get('/v1/birds/legit-bird')
+      .get('/birds/legit-bird')
       .expect(200);
 
     assert.deepEqual(response.body, bird);
@@ -242,7 +242,7 @@ describe('GET /v1/birds/:id', () => {
     sandbox.stub(birds, 'find').withArgs('bird-that-doesnt-exist').returns(Promise.resolve());
 
     await request(app)
-      .get('/v1/birds/bird-that-doesnt-exist')
+      .get('/birds/bird-that-doesnt-exist')
       .expect(404);
   });
 
@@ -250,7 +250,7 @@ describe('GET /v1/birds/:id', () => {
     sandbox.stub(birds, 'find').withArgs('error-bird').throws(new Error('Bad bird'));
 
     let response = await request(app)
-      .get('/v1/birds/error-bird')
+      .get('/birds/error-bird')
       .expect(500);
 
     assert.strictEqual(response.body.statusCode, 500);
@@ -277,7 +277,7 @@ describe('POST /birds', () => {
   it('saves the bird with a 201 response', async () => {
     let stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
     await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(robin)
       .expect(201);
 
@@ -290,7 +290,7 @@ describe('POST /birds', () => {
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(expected));
 
     let response = await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(robin)
       .expect(201);
 
@@ -303,7 +303,7 @@ describe('POST /birds', () => {
     const stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(robin)
       .expect(400);
 
@@ -316,7 +316,7 @@ describe('POST /birds', () => {
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(robin)
       .expect(400);
   });
@@ -327,7 +327,7 @@ describe('POST /birds', () => {
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
 
     await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(json)
       .expect(400);
   });
@@ -336,7 +336,7 @@ describe('POST /birds', () => {
     sandbox.stub(birds, 'create').throws(new Error('Bad!'));
 
     await request(app)
-      .post('/v1/birds')
+      .post('/birds')
       .send(robin)
       .expect(500);
   });
@@ -351,7 +351,7 @@ describe('DELETE /birds/:id', () => {
     sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
-      .delete('/v1/birds/bird-id')
+      .delete('/birds/bird-id')
       .expect(204);
   });
 
@@ -359,7 +359,7 @@ describe('DELETE /birds/:id', () => {
     let stub = sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
-      .delete('/v1/birds/bird-id')
+      .delete('/birds/bird-id')
       .expect(204);
 
     assert.equal(stub.calledOnce, true);
@@ -369,7 +369,7 @@ describe('DELETE /birds/:id', () => {
     sandbox.stub(birds, 'delete').withArgs('does-not-exist').returns(Promise.resolve(false));
 
     let response = await request(app)
-      .delete('/v1/birds/does-not-exist')
+      .delete('/birds/does-not-exist')
       .expect(404);
 
     assert.strictEqual(response.body.statusCode, 404);
@@ -379,7 +379,7 @@ describe('DELETE /birds/:id', () => {
     sandbox.stub(birds, 'delete').withArgs('broken-bird').throws(new Error('Boink!'));
 
     await request(app)
-      .delete('/v1/birds/broken-bird')
+      .delete('/birds/broken-bird')
       .expect(500);
   });
 });

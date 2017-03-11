@@ -8,7 +8,7 @@ const paginationLinks = require('../lib/pagination_links');
 let router = new express.Router();
 
 const linker = (type) => {
-  let path = '/v1/';
+  let path = '/';
   path += (type === 'bird' ? 'birds' : 'bird-lists');
 
   return (list) => {

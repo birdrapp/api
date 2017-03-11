@@ -17,8 +17,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/v1/bird-lists', birdListsRoute);
-app.use('/v1/birds', birdsRoute);
+app.use('/bird-lists', birdListsRoute);
+app.use('/birds', birdsRoute);
 
 // 404 handler
 app.use((req, res, next) => {
