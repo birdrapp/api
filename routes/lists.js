@@ -1,4 +1,4 @@
-const birdList = require('../models/birdList');
+const birdList = require('../models/list');
 const Boom = require('boom');
 const express = require('express');
 const href = require('../lib/href');
@@ -9,7 +9,7 @@ let router = new express.Router();
 
 const linker = (type) => {
   let path = '/';
-  path += (type === 'bird' ? 'birds' : 'bird-lists');
+  path += (type === 'bird' ? 'birds' : 'lists');
 
   return (list) => {
     list.links = {

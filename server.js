@@ -1,6 +1,6 @@
 const Boom = require('boom');
 const birdsRoute = require('./routes/birds');
-const birdListsRoute = require('./routes/birdLists');
+const birdListsRoute = require('./routes/lists');
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./lib/logger');
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/bird-lists', birdListsRoute);
+app.use('/lists', birdListsRoute);
 app.use('/birds', birdsRoute);
 
 // 404 handler

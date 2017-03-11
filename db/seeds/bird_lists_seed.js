@@ -1,7 +1,7 @@
 
 exports.seed = async (knex, Promise) => {
-  await knex('bird_lists').del();
-  await knex('bird_lists').insert([
+  await knex('lists').del();
+  await knex('lists').insert([
     {
       id: '91b3f4c9-cff0-4147-a68a-65c4962208e0',
       name: 'The British List',

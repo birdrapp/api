@@ -1,6 +1,6 @@
 const assert = require('assert');
 const knex = require('../../db/knex');
-const birdList = require('../../models/birdList');
+const birdList = require('../../models/list');
 
 const UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
 
