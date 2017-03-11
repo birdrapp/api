@@ -125,6 +125,22 @@ router.post('/:id/birds', async (req, res, next) => {
   res.sendStatus(204);
 });
 
+router.delete('/:listId/birds/:birdId', async (req, res, next) => {
+  let result;
+
+  try {
+    result = await birdList.removeBirdFromList(req.params.listId, req.params.birdId);
+  } catch (ex) {
+    return next(ex);
+  }
+
+  if (result === 1) {
+    return res.sendStatus(204);
+  } else {
+    next();
+  }
+});
+
 router.post('/', async (req, res, next) => {
   const result = Joi.validate(req.body, postSchema);
 

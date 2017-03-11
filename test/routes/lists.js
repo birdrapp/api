@@ -461,6 +461,55 @@ describe('Bird Lists', () => {
     });
   });
 
+  describe('DELETE /lists/:list_id/birds/:bird_id', () => {
+    beforeEach(() => {
+      sandbox.stub(birdList, 'removeBirdFromList').returns(Promise.resolve(1));
+    });
+
+    it('returns a 204', async () => {
+      await request(app)
+        .delete('/lists/bou/birds/robin')
+        .expect(204);
+    });
+
+    it('deletes the bird list', async () => {
+      await request(app)
+        .delete('/lists/bou/birds/robin')
+        .expect(204);
+
+      sinon.assert.calledWith(birdList.removeBirdFromList, 'bou', 'robin');
+    });
+
+    it('returns 404 if the list does not exist', async () => {
+      birdList.removeBirdFromList.withArgs('does-not-exist', 'robin').returns(Promise.resolve(0));
+
+      let response = await request(app)
+        .delete('/lists/does-not-exist/birds/robin')
+        .expect(404);
+
+      assert.strictEqual(response.body.statusCode, 404);
+    });
+
+    it('returns 404 if the bird does not exist', async () => {
+      birdList.removeBirdFromList.withArgs('bou', 'doesnt-exist').returns(Promise.resolve(0));
+
+      let response = await request(app)
+        .delete('/lists/bou/birds/doesnt-exist')
+        .expect(404);
+
+      assert.strictEqual(response.body.statusCode, 404);
+    });
+
+    it('returns a 500 if the database throws an error', async () => {
+      birdList.removeBirdFromList.withArgs('broken-list').throws(new Error('Boink!'));
+
+      await request(app)
+        .delete('/lists/broken-list/birds/robin')
+        .expect(500);
+    });
+  });
+
+
   describe('POST /lists', () => {
     let bou;
 

@@ -80,3 +80,7 @@ module.exports.addBirdToList = async (listId, opts = {}) => {
     local_name: opts.localName
   }, ['bird_id', 'list_id']);
 }
+
+module.exports.removeBirdFromList = async (listId, birdId) => {
+  return await ListBird().del().where('list_id', listId).andWhere('bird_id', birdId);
+}

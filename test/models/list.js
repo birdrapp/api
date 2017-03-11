@@ -263,4 +263,28 @@ describe('BirdList', () => {
       }
     });
   });
+
+  describe('.delete', () => {
+    it('removes the bird from the list', async () => {
+      await birdList.removeBirdFromList(validId, validId);
+      const results = await birdList.countBirds(validId);
+
+      assert.strictEqual(results, 1);
+    });
+
+    it('returns 1 if the bird was deleted', async () => {
+      const result = await birdList.removeBirdFromList(validId, validId);
+      assert.strictEqual(result, 1);
+    });
+
+    it('returns 0 if the list does not exist', async () => {
+      const result = await birdList.removeBirdFromList(invalidId, validId);
+      assert.strictEqual(result, 0);
+    });
+
+    it('returns 0 if the bird does not exist', async () => {
+      const result = await birdList.removeBirdFromList(validId, invalidId);
+      assert.strictEqual(result, 0);
+    });
+  });
 });
