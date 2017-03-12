@@ -32,13 +32,24 @@ describe('birds', () => {
   });
 
   describe('.all', () => {
-    it('returns the birds in the database ordered by the sort column', async () => {
+    it('only returns the species (not subspecies)', async () => {
       const results = await birds.all();
-      const robin = results[0];
 
       assert.strictEqual(results.length, 3);
+    });
 
-      validateRobin(robin);
+    it('returns the count of subspecies for each species', async () => {
+      const results = await birds.all();
+
+      assert.strictEqual(results[0].subspecies, 0);
+      assert.strictEqual(results[1].subspecies, 1);
+      assert.strictEqual(results[2].subspecies, 0);
+    });
+
+    it('doesnt return the species_id for species', async () => {
+      const results = await birds.all();
+
+      assert.strictEqual(results[0].speciesId, undefined);
     });
 
     it('supports the perPage option', async () => {
@@ -82,7 +93,7 @@ describe('birds', () => {
   describe('.count', () => {
     it('returns the total count of birds in the database', async () => {
       const result = await birds.count();
-      assert.strictEqual(result, 3);
+      assert.strictEqual(result, 4);
     });
   });
 
@@ -91,6 +102,18 @@ describe('birds', () => {
       const robin = await birds.find(validId);
 
       validateRobin(robin);
+    });
+
+    it('returns the count of subspecies', async () => {
+      const eagle = await birds.find('ec56048e-0695-11e7-9d5b-9f01cdc37617');
+
+      assert.strictEqual(eagle.subspecies, 1);
+    });
+
+    it('returns a count of 0 subspecies for a species with no subspecies', async () => {
+      const robin = await birds.find(validId);
+
+      assert.strictEqual(robin.subspecies, 0);
     });
 
     it('returns undefined when the bird cannot be found', async () => {

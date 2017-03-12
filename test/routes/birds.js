@@ -12,7 +12,8 @@ function createBirds(num) {
   for (let i = 1; i <= num; i++) {
     birds.push({
       id: i,
-      name: 'Robin ' + i
+      name: 'Robin ' + i,
+      subspecies: 4
     });
   }
 
@@ -61,6 +62,21 @@ describe('GET /birds', () => {
 
     assert.equal(response.body.data[0].links.self, 'http://localhost:8080/birds/1');
     assert.equal(response.body.data[1].links.self, 'http://localhost:8080/birds/2');
+  });
+
+  it('adds a link to it\'s subspecies if it has more than 1', async () => {
+    const results = createBirds(2);
+
+    results[1].subspecies = 0; // this species has no subspecies
+
+    birds.all.returns(Promise.resolve(results));
+
+    const response = await request(app)
+      .get('/birds')
+      .expect(200);
+
+    assert.equal(response.body.data[0].links.subspecies, 'http://localhost:8080/birds/1/subspecies');
+    assert.strictEqual(response.body.data[1].links.subspecies, undefined);
   });
 
   it('returns a 500 if the database fails', async () => {
@@ -238,6 +254,38 @@ describe('GET /birds/:id', () => {
       .expect(200);
 
     assert.deepEqual(response.body, bird);
+  });
+
+  it('adds a link to the birds subspecies if it has any', async () => {
+    const bird = {
+      id: 'legit-bird',
+      name: 'Robin',
+      subspecies: 2
+    };
+
+    sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
+
+    const response = await request(app)
+      .get('/birds/legit-bird')
+      .expect(200);
+
+    assert.strictEqual(response.body.links.subspecies, 'http://localhost:8080/birds/legit-bird/subspecies');
+  });
+
+  it('doesn\'t add a link to the birds subspecies if it has none', async () => {
+    const bird = {
+      id: 'legit-bird',
+      name: 'Robin',
+      subspecies: 0
+    };
+
+    sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
+
+    const response = await request(app)
+      .get('/birds/legit-bird')
+      .expect(200);
+
+    assert.strictEqual(response.body.links.subspecies, undefined);
   });
 
   it('returns a 404 for an unknown bird', async () => {

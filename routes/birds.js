@@ -16,7 +16,8 @@ const postSchema = Joi.object().keys({
   family: Joi.string().required().min(1).max(255),
   order: Joi.string().required().min(1).max(255),
   alternativeNames: Joi.array().optional().items(Joi.string().min(1).max(255)),
-  sort: Joi.number().required()
+  sort: Joi.number().required(),
+  speciesId: Joi.string()
 });
 
 const listQuery = Joi.object().keys({
@@ -29,6 +30,9 @@ const addLinks = (bird) => {
   bird.links = {
     self: href(`/birds/${bird.id}`)
   };
+  if (bird.subspecies > 0) {
+    bird.links.subspecies = href(`/birds/${bird.id}/subspecies`);
+  }
   return bird;
 };
 
@@ -76,7 +80,7 @@ router.get('/:id', async (req, res, next) => {
   }
 
   if (bird !== undefined) {
-    return res.json(bird);
+    return res.json(addLinks(bird));
   } else {
     next();
   }

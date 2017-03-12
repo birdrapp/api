@@ -10,7 +10,7 @@ exports.seed = async (knex) => {
       family_name: 'Muscicapidae',
       family: 'Old World flycatchers and chats',
       order: 'Passeriformes',
-      sort: 3
+      sort: 4
     },
     {
       id: '91b3f4c9-cff0-4147-a68a-65c4962208e0',
@@ -29,6 +29,16 @@ exports.seed = async (knex) => {
       family: 'Old World flycatchers and chats',
       order: 'Passeriformes',
       sort: 2
+    },
+    {
+      id: '73e3f4ba-073b-11e7-916c-9747cb349ce0',
+      common_name: 'Eagle',
+      scientific_name: 'Eagle Eagle Eagle',
+      family_name: 'Muscicapidae',
+      family: 'Old World flycatchers and chats',
+      order: 'Passeriformes',
+      sort: 3,
+      species_id: 'ec56048e-0695-11e7-9d5b-9f01cdc37617'
     }
   ]);
 };

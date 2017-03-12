@@ -7,7 +7,8 @@ const knex = require('../db/knex');
 const Bird = () => knex('birds');
 const rowToBird = (row) => {
   const bird = _.mapKeys(row, (v, k) => changeCase.camel(k));
-  if (bird.alternativeNames === null) bird.alternativeNames = [];
+  bird.subspecies = parseInt(bird.subspecies);
+  delete bird.speciesId;
   return bird;
 };
 
@@ -16,8 +17,14 @@ module.exports.all = async (opts = {}) => {
   const page = opts.page;
   const q = opts.query;
 
+  const query = knex.with('subspecies', (qb) => {
+    qb.select(knex.raw('coalesce("species_id", "id") as species_id'), knex.raw('count(*) - 1 as subspecies')).from('birds').groupByRaw(1);
+  }).select('birds.*', 'subspecies')
+    .from('subspecies')
+    .join('birds', 'birds.id', 'subspecies.species_id')
+    .orderBy('sort');
+
   const offset = (page - 1) * limit;
-  const query = Bird().select().orderBy('sort');
 
   if (q !== undefined) query.where('common_name', 'ilike', `${q}%`);
   if (limit !== undefined) query.limit(limit);
@@ -32,12 +39,18 @@ module.exports.count = async () => {
 };
 
 module.exports.find = async (id) => {
-  const bird = await Bird()
-    .select('birds.*')
-    .where('id', id)
-    .first();
+  const results = await Promise.all([
+    Bird().select('birds.*').where('id', id).first(),
+    Bird().count('id').where('species_id', id)
+  ]);
 
-  if (bird !== undefined) return rowToBird(bird);
+  const bird = results[0];
+  const subspecies = results[1][0].count;
+
+  if (bird !== undefined) {
+    bird.subspecies = subspecies;
+    return rowToBird(bird);
+  }
 };
 
 module.exports.create = async (bird) => {
