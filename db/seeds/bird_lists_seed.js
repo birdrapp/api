@@ -1,3 +1,4 @@
+'use strict';
 
 exports.seed = async (knex, Promise) => {
   await knex('lists').del();

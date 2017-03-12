@@ -1,3 +1,5 @@
+'use strict';
+
 const birdList = require('../models/list');
 const Boom = require('boom');
 const express = require('express');
@@ -5,7 +7,7 @@ const href = require('../lib/href');
 const Joi = require('joi');
 const paginationLinks = require('../lib/pagination_links');
 
-let router = new express.Router();
+const router = new express.Router();
 
 const linker = (type) => {
   let path = '/';
@@ -14,10 +16,10 @@ const linker = (type) => {
   return (list) => {
     list.links = {
       self: href(`${path}/${list.id}`)
-    }
+    };
     return list;
   };
-}
+};
 
 const listQuery = Joi.object().keys({
   page: Joi.number().min(1).default(1),

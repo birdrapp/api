@@ -1,3 +1,4 @@
+'use strict';
 
 exports.up = async (knex) => {
   return await knex.schema.createTable('lists', (table) => {

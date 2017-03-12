@@ -1,3 +1,5 @@
+'use strict';
+
 const app = require('../../server');
 const assert = require('assert');
 const birds = require('../../models/bird');
@@ -6,12 +8,12 @@ const sinon = require('sinon');
 const sandbox = sinon.sandbox.create();
 
 function createBirds(num) {
-  let birds = [];
-  for (var i = 1; i <= num; i++) {
+  const birds = [];
+  for (let i = 1; i <= num; i++) {
     birds.push({
       id: i,
       name: 'Robin ' + i
-    })
+    });
   }
 
   return birds;
@@ -30,7 +32,7 @@ describe('GET /birds', () => {
   it('returns a 200', async () => {
     await request(app)
       .get('/birds')
-      .expect(200)
+      .expect(200);
   });
 
   it('returns the birds from the database', async () => {
@@ -49,7 +51,7 @@ describe('GET /birds', () => {
   });
 
   it('adds a link to each resource', async () => {
-    const results = createBirds(2)
+    const results = createBirds(2);
 
     birds.all.returns(Promise.resolve(results));
 
@@ -224,14 +226,14 @@ describe('GET /birds/:id', () => {
   });
 
   it('returns a bird object', async () => {
-    let bird = {
+    const bird = {
       id: 'legit-bird',
       name: 'Robin'
     };
 
     sandbox.stub(birds, 'find').withArgs('legit-bird').returns(Promise.resolve(bird));
 
-    let response = await request(app)
+    const response = await request(app)
       .get('/birds/legit-bird')
       .expect(200);
 
@@ -249,7 +251,7 @@ describe('GET /birds/:id', () => {
   it('returns a 500 when the database fails', async () => {
     sandbox.stub(birds, 'find').withArgs('error-bird').throws(new Error('Bad bird'));
 
-    let response = await request(app)
+    const response = await request(app)
       .get('/birds/error-bird')
       .expect(500);
 
@@ -276,7 +278,7 @@ describe('POST /birds', () => {
   });
 
   it('saves the bird with a 201 response', async () => {
-    let stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
+    const stub = sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(true));
     await request(app)
       .post('/birds')
       .send(robin)
@@ -286,11 +288,11 @@ describe('POST /birds', () => {
   });
 
   it('returns the newly created bird', async () => {
-    let expected = Object.assign({ id: 'robin-robin' }, robin);
+    const expected = Object.assign({ id: 'robin-robin' }, robin);
 
     sandbox.stub(birds, 'create').withArgs(robin).returns(Promise.resolve(expected));
 
-    let response = await request(app)
+    const response = await request(app)
       .post('/birds')
       .send(robin)
       .expect(201);
@@ -357,7 +359,7 @@ describe('DELETE /birds/:id', () => {
   });
 
   it('deletes the bird', async () => {
-    let stub = sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
+    const stub = sandbox.stub(birds, 'delete').withArgs('bird-id').returns(Promise.resolve(1));
 
     await request(app)
       .delete('/birds/bird-id')
@@ -369,7 +371,7 @@ describe('DELETE /birds/:id', () => {
   it('returns 404 if the bird does not exist', async () => {
     sandbox.stub(birds, 'delete').withArgs('does-not-exist').returns(Promise.resolve(false));
 
-    let response = await request(app)
+    const response = await request(app)
       .delete('/birds/does-not-exist')
       .expect(404);
 

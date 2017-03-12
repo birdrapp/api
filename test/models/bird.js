@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const knex = require('../../db/knex');
 const birds = require('../../models/bird');
@@ -173,7 +175,7 @@ describe('birds', () => {
     });
 
     it('returns 0 if the bird did not exist', async () => {
-      let result = await birds.delete(invalidId);
+      const result = await birds.delete(invalidId);
       assert.strictEqual(result, 0);
     });
   });

@@ -1,3 +1,5 @@
+'use strict';
+
 const Boom = require('boom');
 const birdsRoute = require('./routes/birds');
 const birdListsRoute = require('./routes/lists');

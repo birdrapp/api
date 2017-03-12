@@ -1,3 +1,5 @@
+'use strict';
+
 const birds = require('../models/bird');
 const href = require('../lib/href');
 const paginationLinks = require('../lib/pagination_links');
@@ -5,7 +7,7 @@ const Boom = require('boom');
 const express = require('express');
 const Joi = require('joi');
 
-let router = new express.Router();
+const router = new express.Router();
 
 const postSchema = Joi.object().keys({
   commonName: Joi.string().required().min(1).max(255),
@@ -26,9 +28,9 @@ const listQuery = Joi.object().keys({
 const addLinks = (bird) => {
   bird.links = {
     self: href(`/birds/${bird.id}`)
-  }
+  };
   return bird;
-}
+};
 
 router.get('/', async (req, res, next) => {
   const validate = Joi.validate(req.query, listQuery);

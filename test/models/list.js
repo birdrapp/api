@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const knex = require('../../db/knex');
 const birdList = require('../../models/list');

@@ -1,3 +1,5 @@
+'use strict';
+
 const cluster = require('cluster');
 const logger = require('./lib/logger');
 const server = require('./server');
@@ -6,7 +8,7 @@ const port = process.env.PORT || 8080;
 if (cluster.isMaster) {
   const cpuCount = require('os').cpus().length;
 
-  for (var i = 0; i < cpuCount; i += 1) {
+  for (let i = 0; i < cpuCount; i += 1) {
     cluster.fork();
   }
 } else {

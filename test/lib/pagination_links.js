@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const paginationLinks = require('../../lib/pagination_links');
 

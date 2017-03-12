@@ -1,3 +1,5 @@
+'use strict';
+
 const app = require('../../server');
 const assert = require('assert');
 const birdList = require('../../models/list');
@@ -31,7 +33,7 @@ describe('Bird Lists', () => {
     it('returns a 200', async () => {
       await request(app)
         .get('/lists')
-        .expect(200)
+        .expect(200);
     });
 
     it('returns the bird lists from the database', async () => {
@@ -483,7 +485,7 @@ describe('Bird Lists', () => {
     it('returns 404 if the list does not exist', async () => {
       birdList.removeBirdFromList.withArgs('does-not-exist', 'robin').returns(Promise.resolve(0));
 
-      let response = await request(app)
+      const response = await request(app)
         .delete('/lists/does-not-exist/birds/robin')
         .expect(404);
 
@@ -493,7 +495,7 @@ describe('Bird Lists', () => {
     it('returns 404 if the bird does not exist', async () => {
       birdList.removeBirdFromList.withArgs('bou', 'doesnt-exist').returns(Promise.resolve(0));
 
-      let response = await request(app)
+      const response = await request(app)
         .delete('/lists/bou/birds/doesnt-exist')
         .expect(404);
 
@@ -535,11 +537,11 @@ describe('Bird Lists', () => {
     });
 
     it('returns the newly created bird', async () => {
-      let expected = Object.assign({ id: 'bou' }, bou);
+      const expected = Object.assign({ id: 'bou' }, bou);
 
       birdList.create.withArgs(bou).returns(Promise.resolve(expected));
 
-      let response = await request(app)
+      const response = await request(app)
         .post('/lists')
         .send(bou)
         .expect(201);
@@ -610,7 +612,7 @@ describe('Bird Lists', () => {
     it('returns 404 if the bird list does not exist', async () => {
       birdList.delete.withArgs('does-not-exist').returns(Promise.resolve(0));
 
-      let response = await request(app)
+      const response = await request(app)
         .delete('/lists/does-not-exist')
         .expect(404);
 

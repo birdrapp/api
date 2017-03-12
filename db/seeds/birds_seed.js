@@ -1,3 +1,4 @@
+'use strict';
 
 exports.seed = async (knex) => {
   await knex('birds').del();

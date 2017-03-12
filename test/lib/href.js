@@ -1,3 +1,5 @@
+'use strict';
+
 const assert = require('assert');
 const href = require('../../lib/href');
 
