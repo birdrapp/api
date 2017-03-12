@@ -15,7 +15,7 @@ module.exports.all = async (opts = {}) => {
   const q = opts.query;
 
   const offset = (page - 1) * limit;
-  const query = Bird().select();
+  const query = Bird().select().orderBy('sort');
 
   if (q !== undefined) query.where('common_name', 'ilike', `${q}%`);
   if (limit !== undefined) query.limit(limit);

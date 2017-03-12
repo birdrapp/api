@@ -13,7 +13,8 @@ const postSchema = Joi.object().keys({
   familyName: Joi.string().required().min(1).max(255),
   family: Joi.string().required().min(1).max(255),
   order: Joi.string().required().min(1).max(255),
-  alternativeNames: Joi.array().optional().items(Joi.string().min(1).max(255))
+  alternativeNames: Joi.array().optional().items(Joi.string().min(1).max(255)),
+  sort: Joi.number().required()
 });
 
 const listQuery = Joi.object().keys({

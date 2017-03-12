@@ -7,6 +7,7 @@ exports.up = async (knex, Promise) => {
     table.string('family_name').notNullable();
     table.string('family').notNullable();
     table.string('order').notNullable();
+    table.integer('sort').notNullable().unique().index();
     table.timestamps(true, true);
   });
 };

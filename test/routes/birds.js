@@ -266,7 +266,8 @@ describe('POST /birds', () => {
       scientificName: 'Robin',
       familyName: 'Muscicapidae',
       family: 'Old World flycatchers and chats',
-      order: 'Passeriformes'
+      order: 'Passeriformes',
+      sort: 1
     };
   });
 

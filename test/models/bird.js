@@ -30,7 +30,7 @@ describe('birds', () => {
   });
 
   describe('.all', () => {
-    it('returns the birds in the database', async () => {
+    it('returns the birds in the database ordered by the sort column', async () => {
       const results = await birds.all();
       const robin = results[0];
 
@@ -63,7 +63,7 @@ describe('birds', () => {
       });
 
       assert.strictEqual(results.length, 1);
-      assert.equal(results[0].commonName, 'Eagle');
+      assert.equal(results[0].commonName, 'Crow');
     });
 
     // TODO: find a better way of testing search queries
@@ -105,7 +105,8 @@ describe('birds', () => {
         scientificName: 'Newus Birdus',
         familyName: 'Muscicapidae',
         family: 'Old World flycatchers and chats',
-        order: 'Passeriformes'
+        order: 'Passeriformes',
+        sort: 10
       };
     });
 
