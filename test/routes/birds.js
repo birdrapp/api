@@ -307,6 +307,150 @@ describe('GET /birds/:id', () => {
   });
 });
 
+describe('GET /birds/:id/subspecies', () => {
+  beforeEach(() => {
+    sandbox.stub(birds, 'subspecies').returns(Promise.resolve([]));
+    sandbox.stub(birds, 'countSubspecies').returns(Promise.resolve(0));
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
+  it('returns a 200', async () => {
+    await request(app)
+      .get('/birds/robin/subspecies')
+      .expect(200);
+  });
+
+  it('returns the bird\'s subspecies from the database', async () => {
+    const results = createBirds(2);
+    birds.subspecies.withArgs('robin').returns(Promise.resolve(results));
+
+    const response = await request(app)
+      .get('/birds/robin/subspecies')
+      .expect(200);
+
+    assert.strictEqual(response.body.data[0].id, 1);
+    assert.strictEqual(response.body.data[0].name, 'Robin 1');
+    assert.strictEqual(response.body.data[1].id, 2);
+    assert.strictEqual(response.body.data[1].name, 'Robin 2');
+  });
+
+  it('returns a 500 if the database fails', async () => {
+    birds.subspecies.throws(new Error('Database failed'));
+
+    const response = await request(app)
+      .get('/birds/robin/subspecies')
+      .expect(500);
+
+    assert.strictEqual(response.body.statusCode, 500);
+  });
+
+  describe('pagination', () => {
+    it('returns the per page in the response', async () => {
+      const response = await request(app)
+        .get('/birds/robin/subspecies?perPage=4')
+        .expect(200);
+
+      assert.strictEqual(response.body.perPage, 4);
+    });
+
+    it('returns the page in the response', async () => {
+      const response = await request(app)
+        .get('/birds/robin/subspecies?page=2')
+        .expect(200);
+
+      assert.strictEqual(response.body.page, 2);
+    });
+
+    it('returns the total in the response', async () => {
+      birds.countSubspecies.returns(Promise.resolve(10000));
+
+      const response = await request(app)
+        .get('/birds/robin/subspecies')
+        .expect(200);
+
+      assert.strictEqual(response.body.total, 10000);
+    });
+
+    it('returns a 500 if the total count fails', async () => {
+      birds.countSubspecies.throws(new Error('Whoops'));
+
+      await request(app).get('/birds/robin/subspecies').expect(500);
+    });
+
+    it('sends the pagination parameters to the database', async () => {
+      await request(app)
+        .get('/birds/robin/subspecies?page=3&perPage=17')
+        .expect(200);
+
+      sinon.assert.calledWith(birds.subspecies, 'robin', sinon.match({
+        page: 3,
+        perPage: 17
+      }));
+    });
+
+    it('returns an error when the page parameter is invalid', async () => {
+      await request(app).get('/birds/robin/subspecies?page=ibl').expect(400);
+    });
+
+    it('returns an error when page <= 0', async () => {
+      await request(app).get('/birds/robin/subspecies?page=-1').expect(400);
+      await request(app).get('/birds/robin/subspecies?page=0').expect(400);
+    });
+
+    it('returns an error when the perPage parameter is invalid', async () => {
+      await request(app).get('/birds/robin/subspecies?perPage=ibl').expect(400);
+    });
+
+    it('returns an error when perPage < 0', async () => {
+      await request(app).get('/birds/robin/subspecies?perPage=-1').expect(400);
+    });
+
+    it('returns an empty result set when perPage is 0', async () => {
+      birds.subspecies.withArgs(sinon.match({
+        page: 1,
+        perPage: 0
+      })).returns(Promise.resolve([]));
+      birds.countSubspecies.returns(Promise.resolve(800));
+
+      const response = await request(app)
+        .get('/birds/robin/subspecies?perPage=0')
+        .expect(200);
+
+      assert.strictEqual(response.body.total, 800);
+      assert.deepEqual(response.body.data, []);
+    });
+
+    it('defaults to page 1 and perPage 20', async () => {
+      const response = await request(app)
+        .get('/birds/robin/subspecies')
+        .expect(200);
+
+      sinon.assert.calledWith(birds.subspecies, 'robin', sinon.match({
+        page: 1,
+        perPage: 20
+      }));
+      assert.strictEqual(response.body.page, 1);
+      assert.strictEqual(response.body.perPage, 20);
+    });
+
+    it('returns the links for the next and previous pages', async () => {
+      const results = createBirds(3);
+      birds.subspecies.returns(Promise.resolve(results));
+      birds.countSubspecies.returns(Promise.resolve(9));
+
+      const response = await request(app)
+        .get('/birds/robin/subspecies?page=2&perPage=1')
+        .expect(200);
+
+      assert.strictEqual(response.body.links.next, 'http://localhost:8080/birds/robin/subspecies?page=3&perPage=1');
+      assert.strictEqual(response.body.links.previous, 'http://localhost:8080/birds/robin/subspecies?page=1&perPage=1');
+    });
+  });
+});
+
 describe('POST /birds', () => {
   let robin;
 

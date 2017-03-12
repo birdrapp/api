@@ -86,6 +86,39 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+router.get('/:id/subspecies', async (req, res, next) => {
+  const id = req.params.id;
+  const validate = Joi.validate(req.query, listQuery);
+
+  if (validate.error !== null) return next(Boom.badRequest(validate.message));
+  req.query = validate.value;
+
+  const perPage = req.query.perPage;
+  const page = req.query.page;
+
+  let results;
+
+  try {
+    results = await Promise.all([
+      birds.subspecies(id, {
+        page: page,
+        perPage: perPage
+      }),
+      birds.countSubspecies(id)
+    ]);
+  } catch (ex) {
+    return next(ex);
+  }
+
+  res.json({
+    perPage: perPage,
+    page: page,
+    total: results[1],
+    links: paginationLinks(req, results[1]),
+    data: results[0]
+  });
+});
+
 router.post('/', async (req, res, next) => {
   const result = Joi.validate(req.body, postSchema);
 

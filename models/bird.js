@@ -53,6 +53,9 @@ module.exports.find = async (id) => {
   }
 };
 
+module.exports.subspecies = async () => { await new Error(); };
+module.exports.countSubspecies = async () => { await new Error(); };
+
 module.exports.create = async (bird) => {
   const row = _.mapKeys(bird, (v, k) =>
     changeCase.snake(k)
