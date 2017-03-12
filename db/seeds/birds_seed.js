@@ -39,6 +39,16 @@ exports.seed = async (knex) => {
       order: 'Passeriformes',
       sort: 3,
       species_id: 'ec56048e-0695-11e7-9d5b-9f01cdc37617'
+    },
+    {
+      id: '15e4dbe4-0750-11e7-8212-7b57fdf1055e',
+      common_name: 'Eagle',
+      scientific_name: 'Eagle Eagle Beagle',
+      family_name: 'Muscicapidae',
+      family: 'Old World flycatchers and chats',
+      order: 'Passeriformes',
+      sort: 5,
+      species_id: 'ec56048e-0695-11e7-9d5b-9f01cdc37617'
     }
   ]);
 };

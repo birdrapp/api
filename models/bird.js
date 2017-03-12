@@ -8,7 +8,6 @@ const Bird = () => knex('birds');
 const rowToBird = (row) => {
   const bird = _.mapKeys(row, (v, k) => changeCase.camel(k));
   bird.subspecies = parseInt(bird.subspecies);
-  delete bird.speciesId;
   return bird;
 };
 
@@ -34,18 +33,18 @@ module.exports.all = async (opts = {}) => {
 };
 
 module.exports.count = async () => {
-  const result = await Bird().count('id as count');
+  const result = await Bird().count('id as count').whereNull('species_id');
   return parseInt(result[0].count);
 };
 
 module.exports.find = async (id) => {
   const results = await Promise.all([
     Bird().select('birds.*').where('id', id).first(),
-    Bird().count('id').where('species_id', id)
+    module.exports.countSubspecies(id)
   ]);
 
   const bird = results[0];
-  const subspecies = results[1][0].count;
+  const subspecies = results[1];
 
   if (bird !== undefined) {
     bird.subspecies = subspecies;
@@ -53,8 +52,23 @@ module.exports.find = async (id) => {
   }
 };
 
-module.exports.subspecies = async () => { await new Error(); };
-module.exports.countSubspecies = async () => { await new Error(); };
+module.exports.subspecies = async (id, opts = {}) => {
+  const limit = opts.perPage;
+  const page = opts.page;
+  const offset = (page - 1) * limit;
+
+  const query = Bird().where('species_id', id);
+
+  if (limit !== undefined) query.limit(limit);
+  if (offset !== undefined) query.offset(offset);
+
+  return await query.map(rowToBird);
+};
+
+module.exports.countSubspecies = async (id) => {
+  const result = await Bird().count('id as count').where('species_id', id);
+  return parseInt(result[0].count);
+};
 
 module.exports.create = async (bird) => {
   const row = _.mapKeys(bird, (v, k) =>

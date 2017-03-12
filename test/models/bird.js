@@ -42,14 +42,8 @@ describe('birds', () => {
       const results = await birds.all();
 
       assert.strictEqual(results[0].subspecies, 0);
-      assert.strictEqual(results[1].subspecies, 1);
+      assert.strictEqual(results[1].subspecies, 2);
       assert.strictEqual(results[2].subspecies, 0);
-    });
-
-    it('doesnt return the species_id for species', async () => {
-      const results = await birds.all();
-
-      assert.strictEqual(results[0].speciesId, undefined);
     });
 
     it('supports the perPage option', async () => {
@@ -90,10 +84,62 @@ describe('birds', () => {
     });
   });
 
+  describe('.subspecies', () => {
+    const eagleId = 'ec56048e-0695-11e7-9d5b-9f01cdc37617';
+
+    it('only returns the subspecies (not species)', async () => {
+      const results = await birds.subspecies(eagleId);
+
+      assert.strictEqual(results.length, 2);
+    });
+
+    it('returns the species_id for subspecies', async () => {
+      const results = await birds.subspecies(eagleId);
+
+      assert.strictEqual(results[0].speciesId, eagleId);
+    });
+
+    it('supports the perPage option', async () => {
+      const results = await birds.subspecies(eagleId, {
+        perPage: 1
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, '73e3f4ba-073b-11e7-916c-9747cb349ce0');
+    });
+
+    it('supports a perPage of 0', async () => {
+      const results = await birds.subspecies(eagleId, {
+        perPage: 0
+      });
+
+      assert.strictEqual(results.length, 0);
+    });
+
+    it('supports the page option', async () => {
+      const results = await birds.subspecies(eagleId, {
+        perPage: 1,
+        page: 2
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].scientificName, 'Eagle Eagle Beagle');
+    });
+  });
+
   describe('.count', () => {
-    it('returns the total count of birds in the database', async () => {
+    it('returns the total count of species in the database', async () => {
       const result = await birds.count();
-      assert.strictEqual(result, 4);
+      assert.strictEqual(result, 3);
+    });
+  });
+
+  describe('.countSubspecies', () => {
+    const eagleId = 'ec56048e-0695-11e7-9d5b-9f01cdc37617';
+
+    it('returns the total count of subspecies for a given species', async () => {
+      const result = await birds.countSubspecies(eagleId);
+      assert.strictEqual(result, 2);
     });
   });
 
@@ -107,7 +153,7 @@ describe('birds', () => {
     it('returns the count of subspecies', async () => {
       const eagle = await birds.find('ec56048e-0695-11e7-9d5b-9f01cdc37617');
 
-      assert.strictEqual(eagle.subspecies, 1);
+      assert.strictEqual(eagle.subspecies, 2);
     });
 
     it('returns a count of 0 subspecies for a species with no subspecies', async () => {
