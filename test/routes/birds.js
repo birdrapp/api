@@ -13,7 +13,8 @@ function createBirds(num) {
     birds.push({
       id: i,
       name: 'Robin ' + i,
-      subspecies: 4
+      subspecies: 4,
+      speciesId: 'robin-id'
     });
   }
 
@@ -335,6 +336,29 @@ describe('GET /birds/:id/subspecies', () => {
     assert.strictEqual(response.body.data[0].name, 'Robin 1');
     assert.strictEqual(response.body.data[1].id, 2);
     assert.strictEqual(response.body.data[1].name, 'Robin 2');
+  });
+
+  it('doesn\'t return a number of subspecies', async () => {
+    const results = createBirds(2);
+    birds.subspecies.returns(Promise.resolve(results));
+
+    const response = await request(app)
+      .get('/birds/robin/subspecies')
+      .expect(200);
+
+    assert.strictEqual(response.body.data[0].subspecies, undefined);
+    assert.strictEqual(response.body.data[1].subspecies, undefined);
+  });
+
+  it('returns a link to each subspecies parent species', async () => {
+    const results = createBirds(2);
+    birds.subspecies.returns(Promise.resolve(results));
+    const response = await request(app)
+      .get('/birds/robin/subspecies')
+      .expect(200);
+
+    assert.strictEqual(response.body.data[0].links.species, 'http://localhost:8080/birds/robin-id');
+    assert.strictEqual(response.body.data[1].links.species, 'http://localhost:8080/birds/robin-id');
   });
 
   it('returns a 500 if the database fails', async () => {

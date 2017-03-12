@@ -30,9 +30,8 @@ const addLinks = (bird) => {
   bird.links = {
     self: href(`/birds/${bird.id}`)
   };
-  if (bird.subspecies > 0) {
-    bird.links.subspecies = href(`/birds/${bird.id}/subspecies`);
-  }
+  if (bird.subspecies > 0) bird.links.subspecies = href(`/birds/${bird.id}/subspecies`);
+  if (bird.speciesId) bird.links.species = href(`/birds/${bird.speciesId}`);
   return bird;
 };
 
@@ -115,7 +114,10 @@ router.get('/:id/subspecies', async (req, res, next) => {
     page: page,
     total: results[1],
     links: paginationLinks(req, results[1]),
-    data: results[0]
+    data: results[0].map((b) => {
+      delete b.subspecies;
+      return addLinks(b);
+    })
   });
 });
 
