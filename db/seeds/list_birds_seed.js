@@ -1,5 +1,5 @@
 
-exports.seed = async (knex, Promise) => {
+exports.seed = async (knex) => {
   // Deletes ALL existing entries
   await knex('list_birds').del()
 

@@ -21,7 +21,7 @@ app.use('/lists', birdListsRoute);
 app.use('/birds', birdsRoute);
 
 // 404 handler
-app.use((req, res, next) => {
+app.use((req, res) => {
   const notFound = Boom.notFound();
   res.status(notFound.output.statusCode).json(notFound.output.payload);
 });
@@ -42,6 +42,7 @@ app.use((err, req, res, next) => {
     const error = Boom.wrap(err, 500).output;
     res.status(error.statusCode).json(error.payload);
   }
+  next();
 });
 
 module.exports = app;

@@ -1,8 +1,8 @@
 
-exports.up = async (knex, Promise) => {
+exports.up = async (knex) => {
   return await knex.raw('CREATE EXTENSION "uuid-ossp"');
 };
 
-exports.down = async (knex, Promise) => {
+exports.down = async (knex) => {
   return await knex.raw('DROP EXTENSION "uuid-ossp";');
 };

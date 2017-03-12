@@ -1,5 +1,5 @@
 
-exports.up = async (knex, Promise) => {
+exports.up = async (knex) => {
   return await knex.schema.createTable('list_birds', (table) => {
     table.uuid('list_id').notNullable();
     table.uuid('bird_id').notNullable();
@@ -9,6 +9,6 @@ exports.up = async (knex, Promise) => {
   });
 };
 
-exports.down = async (knex, Promise) => {
+exports.down = async (knex) => {
   await knex.schema.dropTable('list_birds');
 };

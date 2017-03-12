@@ -1,5 +1,5 @@
 
-exports.up = async (knex, Promise) => {
+exports.up = async (knex) => {
   return await knex.schema.createTable('lists', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v1mc()'));
     table.string('name').notNullable().unique();
@@ -8,6 +8,6 @@ exports.up = async (knex, Promise) => {
   });
 };
 
-exports.down = async (knex, Promise) => {
+exports.down = async (knex) => {
   await knex.schema.dropTable('lists');
 };

@@ -7,7 +7,9 @@
     "node": "7.7.1"
   },
   "scripts": {
+    "lint": "eslint .",
     "test": "NODE_ENV=test mocha --recursive",
+    "posttest": "npm run lint",
     "autotest": "NODE_ENV=test mocha --recursive --watch",
     "start": "node index.js",
     "create-db": "createdb birdr || true",
@@ -41,6 +43,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "eslint": "^3.17.1",
     "mocha": "^3.2.0",
     "sinon": "^1.17.7",
     "supertest": "^3.0.0"

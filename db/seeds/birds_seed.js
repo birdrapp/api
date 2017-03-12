@@ -1,5 +1,5 @@
 
-exports.seed = async (knex, Promise) => {
+exports.seed = async (knex) => {
   await knex('birds').del();
   await knex('birds').insert([
     {
