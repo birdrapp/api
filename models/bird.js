@@ -30,7 +30,7 @@ module.exports.all = async (opts = {}) => {
 };
 
 module.exports.count = async () => {
-  const result = await Bird().count('id as count').whereNull('species_id');
+  const result = await Bird().count('id as count');
   return parseInt(result[0].count);
 };
 

@@ -129,9 +129,9 @@ describe('birds', () => {
   });
 
   describe('.count', () => {
-    it('returns the total count of species in the database', async () => {
+    it('returns the total count of birds', async () => {
       const result = await birds.count();
-      assert.strictEqual(result, 3);
+      assert.strictEqual(result, 5);
     });
   });
 
