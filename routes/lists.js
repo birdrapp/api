@@ -122,6 +122,9 @@ router.post('/:id/birds', async (req, res, next) => {
   try {
     await birdList.addBirdToList(req.params.id, req.body);
   } catch (ex) {
+    if (ex.code === '23505') {
+      return next(Boom.conflict('Bird already exists in the list'));
+    }
     return next(ex);
   }
 

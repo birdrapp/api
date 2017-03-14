@@ -458,6 +458,18 @@ describe('Bird Lists', () => {
         .expect(400);
     });
 
+    it('returns a 409 when the bird is already a member of the list', async () => {
+      const error = new Error('Bird already exists');
+      error.code = '23505';
+
+      birdList.addBirdToList.throws(error);
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(409);
+    });
+
     it('returns a 400 if you send it invalid JSON', async () => {
       await request(app)
         .post('/lists/bou/birds')
