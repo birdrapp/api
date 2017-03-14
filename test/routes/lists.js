@@ -397,7 +397,8 @@ describe('Bird Lists', () => {
     beforeEach(() => {
       sandbox.stub(birdList, 'addBirdToList').returns(Promise.resolve(true));
       robin = {
-        birdId: 'robin'
+        birdId: 'robin',
+        sort: 1
       };
     });
 
@@ -424,6 +425,17 @@ describe('Bird Lists', () => {
         birdId: 'robin',
         localName: 'British Robin'
       }));
+    });
+
+    it('requires a sort number', async () => {
+      delete robin.sort;
+
+      await request(app)
+        .post('/lists/bou/birds')
+        .send(robin)
+        .expect(400);
+
+      sinon.assert.notCalled(birdList.addBirdToList);
     });
 
     it('returns a 400 if you send invalid parameters', async () => {

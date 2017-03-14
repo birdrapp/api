@@ -165,38 +165,36 @@ describe('BirdList', () => {
   });
 
   describe('.birds', () => {
-    it('returns the birds that are part of the list', async () => {
+    it('returns the birds that are part of the list ordered by sort', async () => {
       const results = await birdList.birds(validId);
 
       assert.strictEqual(results.length, 2);
 
-      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
-      assert.strictEqual(results[1].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+      assert.strictEqual(results[0].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+      assert.strictEqual(results[1].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
     });
 
     it('uses the local name of the bird', async () => {
       const results = await birdList.birds(validId);
 
-      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
-      assert.strictEqual(results[0].commonName, 'British Robin');
+      assert.strictEqual(results[1].commonName, 'British Robin');
     });
 
     it('uses the common name when no local name is provided', async () => {
       const results = await birdList.birds(validId);
 
-      assert.strictEqual(results[1].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
-      assert.strictEqual(results[1].commonName, 'Crow');
+      assert.strictEqual(results[0].commonName, 'Crow');
     });
 
     it('returns all the standard bird information', async () => {
       const results = await birdList.birds(validId);
 
-      assert.strictEqual(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
-      assert.strictEqual(results[0].commonName, 'British Robin');
-      assert.strictEqual(results[0].scientificName, 'Robin Robin');
-      assert.strictEqual(results[0].familyName, 'Muscicapidae');
-      assert.strictEqual(results[0].order, 'Passeriformes');
-      assert.strictEqual(results[0].family, 'Old World flycatchers and chats');
+      assert.strictEqual(results[1].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
+      assert.strictEqual(results[1].commonName, 'British Robin');
+      assert.strictEqual(results[1].scientificName, 'Robin Robin');
+      assert.strictEqual(results[1].familyName, 'Muscicapidae');
+      assert.strictEqual(results[1].order, 'Passeriformes');
+      assert.strictEqual(results[1].family, 'Old World flycatchers and chats');
     });
 
     it('supports the perPage option', async () => {
@@ -222,7 +220,7 @@ describe('BirdList', () => {
       });
 
       assert.strictEqual(results.length, 1);
-      assert.equal(results[0].id, 'e67eb5d8-0695-11e7-9d5b-c70585d538fa');
+      assert.equal(results[0].id, '91b3f4c9-cff0-4147-a68a-65c4962208e0');
     });
   });
 
@@ -237,7 +235,8 @@ describe('BirdList', () => {
     it('adds a record to the list_birds table', async () => {
       const original = await birdList.countBirds(validId);
       await birdList.addBirdToList(validId, {
-        birdId: newId
+        birdId: newId,
+        sort: 4
       });
       const changed = await birdList.countBirds(validId);
 
@@ -247,7 +246,8 @@ describe('BirdList', () => {
     it('allows a local name', async () => {
       await birdList.addBirdToList(validId, {
         birdId: newId,
-        localName: 'Rare Robin'
+        localName: 'Rare Robin',
+        sort: 4
       });
       const results = await birdList.birds(validId);
       assert.strictEqual(results[2].commonName, 'Rare Robin');

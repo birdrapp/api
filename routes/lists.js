@@ -33,7 +33,8 @@ const postSchema = Joi.object().keys({
 
 const addBirdSchema = Joi.object().keys({
   birdId: Joi.string().required(),
-  localName: Joi.string()
+  localName: Joi.string(),
+  sort: Joi.number().required()
 });
 
 router.get('/', async (req, res, next) => {

@@ -41,7 +41,8 @@ module.exports.birds = async (listId, opts = {}) => {
       'birds.id'
     ])
     .innerJoin('birds', 'birds.id', 'list_birds.bird_id')
-    .where('list_id', listId);
+    .where('list_id', listId)
+    .orderBy('list_birds.sort', 'birds.sort');
 
   if (limit !== undefined) query.limit(limit);
   if (offset !== undefined) query.offset(offset);
@@ -79,7 +80,8 @@ module.exports.addBirdToList = async (listId, opts = {}) => {
   await ListBird().insert({
     bird_id: opts.birdId,
     list_id: listId,
-    local_name: opts.localName
+    local_name: opts.localName,
+    sort: opts.sort
   }, ['bird_id', 'list_id']);
 };
 
