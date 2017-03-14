@@ -32,18 +32,10 @@ describe('birds', () => {
   });
 
   describe('.all', () => {
-    it('only returns the species (not subspecies)', async () => {
+    it('returns both species and subspecies', async () => {
       const results = await birds.all();
 
-      assert.strictEqual(results.length, 3);
-    });
-
-    it('returns the count of subspecies for each species', async () => {
-      const results = await birds.all();
-
-      assert.strictEqual(results[0].subspecies, 0);
-      assert.strictEqual(results[1].subspecies, 2);
-      assert.strictEqual(results[2].subspecies, 0);
+      assert.strictEqual(results.length, 5);
     });
 
     it('supports the perPage option', async () => {
@@ -69,8 +61,8 @@ describe('birds', () => {
         page: 2
       });
 
-      assert.strictEqual(results.length, 1);
-      assert.equal(results[0].commonName, 'Crow');
+      assert.strictEqual(results.length, 2);
+      assert.equal(results[0].commonName, 'Eagle');
     });
 
     // TODO: find a better way of testing search queries
@@ -249,7 +241,7 @@ describe('birds', () => {
       await birds.delete(validId);
       const results = await birds.all();
 
-      assert.strictEqual(results.length, 2);
+      assert.strictEqual(results.length, 4);
     });
 
     it('returns 0 if the bird did not exist', async () => {
