@@ -23,7 +23,8 @@ const postSchema = Joi.object().keys({
 const listQuery = Joi.object().keys({
   page: Joi.number().min(1).default(1),
   perPage: Joi.number().min(0).default(20),
-  q: Joi.string()
+  q: Joi.string(),
+  scientificName: Joi.string()
 });
 
 const addLinks = (bird) => {
@@ -44,6 +45,7 @@ router.get('/', async (req, res, next) => {
   const perPage = req.query.perPage;
   const page = req.query.page;
   const query = req.query.q;
+  const scientificName = req.query.scientificName;
 
   let results;
 
@@ -51,6 +53,7 @@ router.get('/', async (req, res, next) => {
     results = await Promise.all([
       birds.all({
         query: query,
+        scientificName: scientificName,
         page: page,
         perPage: perPage
       }),

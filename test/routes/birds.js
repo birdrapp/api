@@ -227,6 +227,41 @@ describe('GET /birds', () => {
       assert.deepEqual(response.body.data, results);
     });
   });
+
+  describe('Filters', () => {
+    it('allows you to filter by scientific name', async () => {
+      await request(app)
+        .get('/birds?scientificName=rob')
+        .expect(200);
+    });
+
+    it('passes the filter to the model', async () => {
+      await request(app)
+        .get('/birds?scientificName=rob')
+        .expect(200);
+
+      sinon.assert.calledWith(birds.all, sinon.match({
+        scientificName: 'rob'
+      }));
+    });
+
+    it('returns the results provided by the model', async () => {
+      const results = [
+        { id: 'one' },
+        { id: 'two' }
+      ];
+
+      birds.all.withArgs(sinon.match({
+        scientificName: 'rob'
+      })).returns(Promise.resolve(results));
+
+      const response = await request(app)
+        .get('/birds?scientificName=rob')
+        .expect(200);
+
+      assert.deepEqual(response.body.data, results);
+    });
+  });
 });
 
 describe('GET /birds/:id', () => {

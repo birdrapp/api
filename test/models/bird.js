@@ -82,6 +82,15 @@ describe('birds', () => {
       assert.strictEqual(results.length, 1);
       assert.equal(results[0].commonName, 'Robin');
     });
+
+    it('filters the results based on the scientificName option', async () => {
+      const results = await birds.all({
+        scientificName: 'Eagle Eagle'
+      });
+
+      assert.strictEqual(results.length, 1);
+      assert.equal(results[0].id, 'ec56048e-0695-11e7-9d5b-9f01cdc37617');
+    });
   });
 
   describe('.subspecies', () => {

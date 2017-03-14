@@ -15,6 +15,7 @@ module.exports.all = async (opts = {}) => {
   const limit = opts.perPage;
   const page = opts.page;
   const q = opts.query;
+  const scientificName = opts.scientificName;
 
   const query = knex.with('subspecies', (qb) => {
     qb.select(knex.raw('coalesce("species_id", "id") as species_id'), knex.raw('count(*) - 1 as subspecies')).from('birds').groupByRaw(1);
@@ -26,6 +27,7 @@ module.exports.all = async (opts = {}) => {
   const offset = (page - 1) * limit;
 
   if (q !== undefined) query.where('common_name', 'ilike', `${q}%`);
+  if (scientificName !== undefined) query.where('scientific_name', 'ilike', scientificName);
   if (limit !== undefined) query.limit(limit);
   if (offset !== undefined) query.offset(offset);
 
